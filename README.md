@@ -21,3 +21,10 @@ dependencies {
 ```
 
 Artifacts are served from the `gh-pages` branch.
+
+## Releasing (automated to gh-pages)
+
+1. Add AAR to `releases/bharatmaps-android-X.Y.Z.aar`.
+2. Commit and push to `main`.
+3. Create and push tag `vX.Y.Z`.
+4. GitHub Actions publishes Maven files to `gh-pages` automatically.
