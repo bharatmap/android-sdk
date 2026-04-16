@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Bharat Maps SDK Demo</string>
+    <string name="btn_my_location">Locate</string>
+    <string name="btn_routes">Routes</string>
+    <string name="btn_start_navigation">Start</string>
+    <string name="btn_stop_navigation">Stop</string>
+    <string name="status_idle">Status: waiting</string>
+    <string name="status_map_ready">Status: map loaded</string>
+    <string name="status_location_enabled">Status: location enabled, puck is active</string>
+    <string name="status_location_missing">Status: could not get current location</string>
+    <string name="status_route_request">Status: requesting route…</string>
+    <string name="status_routes_preview_ready">Status: routes preview ready, select one</string>
+    <string name="status_route_ok">Status: navigation started</string>
+    <string name="status_route_fail">Status: error route requesting</string>
+    <string name="status_navigation_stopped">Status: navigation stopped</string>
+    <string name="status_permission_denied">Status: location access denied</string>
+</resources>
