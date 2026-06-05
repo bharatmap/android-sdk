@@ -60,7 +60,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation("com.bharatmaps:bharatmaps-android:1.0.1")
+    implementation("com.bharatmaps:bharatmaps-android:1.0.22")
     implementation(libs.gson)
     implementation("com.jakewharton.timber:timber:5.0.1")  // или новее, 5.0.1 стабильная
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
