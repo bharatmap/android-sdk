@@ -102,7 +102,11 @@ last_updated="$(date -u +%Y%m%d%H%M%S)"
 
 while IFS= read -r -d '' file; do
   [[ "$file" == *.md5 || "$file" == *.sha1 || "$file" == *.sha256 || "$file" == *.sha512 ]] && continue
-  md5 -q "$file" > "${file}.md5"
+  if command -v md5sum >/dev/null 2>&1; then
+    md5sum "$file" | awk '{print $1}' > "${file}.md5"
+  else
+    md5 -q "$file" > "${file}.md5"
+  fi
   shasum -a 1 "$file" | awk '{print $1}' > "${file}.sha1"
   shasum -a 256 "$file" | awk '{print $1}' > "${file}.sha256"
   shasum -a 512 "$file" | awk '{print $1}' > "${file}.sha512"
