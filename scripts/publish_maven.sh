@@ -43,8 +43,9 @@ cat > "$TARGET_DIR/${ARTIFACT_ID}-${VERSION}.pom" << POM
   </licenses>
   <dependencies>
     <dependency><groupId>com.google.code.gson</groupId><artifactId>gson</artifactId><version>2.10.1</version></dependency>
-    <dependency><groupId>androidx.annotation</groupId><artifactId>annotation</artifactId><version>1.7.1</version></dependency>
-    <dependency><groupId>androidx.legacy</groupId><artifactId>legacy-support-v4</artifactId><version>1.0.0</version></dependency>
+    <dependency><groupId>androidx.annotation</groupId><artifactId>annotation</artifactId><version>1.8.2</version></dependency>
+    <dependency><groupId>androidx.fragment</groupId><artifactId>fragment</artifactId><version>1.8.2</version></dependency>
+    <dependency><groupId>org.jetbrains.kotlin</groupId><artifactId>kotlin-stdlib</artifactId><version>2.0.20</version></dependency>
     <dependency><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><version>4.12.0</version></dependency>
     <dependency><groupId>com.jakewharton.timber</groupId><artifactId>timber</artifactId><version>5.0.1</version></dependency>
     <dependency><groupId>androidx.interpolator</groupId><artifactId>interpolator</artifactId><version>1.0.0</version></dependency>
