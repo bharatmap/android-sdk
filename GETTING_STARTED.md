@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.33"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.34"
 }
 ```
 
@@ -419,6 +419,33 @@ Behavior:
 - camera starts in follow mode (`TRACKING`) after enable
 - follow stops when user manually pans the map
 - `centerOnUserLocation(...)` re-enables follow mode
+
+### Instant follow transition
+
+For an instant follow transition when a user location is already available,
+the public location component also supports duration zero (fixed in Android 1.0.34):
+
+```kotlin
+val component = map.locationComponent
+component.setCameraMode(CameraMode.NONE)
+component.setCameraMode(CameraMode.TRACKING, 0L, 16.0, 0.0, 0.0,
+    object : OnLocationCameraTransitionListener {
+        override fun onLocationCameraTransitionFinished(cameraMode: Int) {
+            // Camera reached the location; subsequent GPS updates continue following.
+        }
+        override fun onLocationCameraTransitionCanceled(cameraMode: Int) {
+            // An unfinished transition was cancelled.
+        }
+    })
+```
+
+Use `com.bharatmaps.android.location.modes.CameraMode` and
+`com.bharatmaps.android.location.OnLocationCameraTransitionListener`.
+The instant transition preserves viewport padding and completes once on main,
+without waiting for an animated native event. The tracking transition state is
+cleared before its finish callback. Existing nonzero transitions and
+`centerOnUserLocation` retain their animated behavior. No app-owned camera
+controller or extra camera update is required.
 
 ### Disable user location
 

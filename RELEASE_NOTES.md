@@ -1,3 +1,11 @@
+# 1.0.34
+
+Android A09: complete zero-duration user tracking transitions.
+
+NONE -> TRACKING with duration 0 now uses the instant camera update path, delivers finish once on main and clears transitioning so subsequent GPS fixes continue following. Zoom and viewport padding are preserved. Positive-duration behavior and public APIs are unchanged.
+
+Source revision: 3700c3a. Published1.0.33 baseline reproduced missing finish and blocked follow; final A09, A08 and13 license/UI regression cases pass. iOS and portal unchanged.
+
 # 1.0.33
 
 Android A08: atomic camera and viewport transition.
