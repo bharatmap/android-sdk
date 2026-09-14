@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.35"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.36"
 }
 ```
 
@@ -1206,3 +1206,50 @@ style reload and cleared on reroute/new Start/arrival/stop. Vanishing mode clips
 congestion to the same projected location as the remaining route. Revision identifies
 the route geometry, not the congestion poll; the application should discard older
 poll responses for the same route before calling this API.
+
+## Native rendered-feature screen-shape queries (Android 1.0.36+)
+
+Use map-local **physical pixels**, measured from the map view's top-left corner.
+`ScreenCoordinate` belongs to `com.bharatmaps.android.geometry`.
+
+```kotlin
+val contour = listOf(
+    ScreenCoordinate(40.0, 100.0),
+    ScreenCoordinate(320.0, 100.0),
+    ScreenCoordinate(40.0, 400.0),
+    ScreenCoordinate(40.0, 100.0) // Explicitly close the contour.
+)
+val hits = map.queryRenderedFeatures(
+    contour,
+    Expression.eq(Expression.get("kind"), "building"),
+    "buildings", "building-labels"
+)
+for (hit in hits) {
+    val rawFeature = hit.feature // Geometry, identifier and all source properties.
+    val nestedProperties = rawFeature.properties() // No POI DTO conversion.
+    val sourceId = hit.sourceId
+    val sourceLayer = hit.sourceLayer // Empty for GeoJSON.
+    val renderedLayerId = hit.layerId
+}
+// No filter:
+val allHits = map.queryRenderedFeatures(contour, "buildings")
+```
+
+- One coordinate queries a point. Two or more unclosed coordinates query an open
+  path, including each segment. Repeat the first coordinate at the end to query
+  a closed contour and its interior. Empty input returns an empty list.
+- Native rendered hit-testing and native Expression filters are used; an open
+  path or contour is not replaced by its bounding rectangle. Painted width,
+  circle radius and symbol collision geometry follow native query semantics.
+- Results are `BharatMapsRenderedFeature`: raw `Feature` plus separate metadata.
+  Unknown nested property objects, arrays and null values are retained.
+- Topmost style layer comes first, independently of the order of `layerIds`.
+  Native ordering within a layer is retained. A hit shared by several path
+  segments is returned once per native tile feature/rendered layer. Distinct
+  features are not merged merely because they have equal properties or IDs.
+  Native clipped tile fragments and hits in different layers remain separate.
+- Omitted/null/empty layer IDs query all rendered layers, matching the existing
+  PointF/RectF convention. A nonexistent layer ID returns no hits.
+- Call on the UI thread after the style and desired source tiles have rendered.
+  Queries have no camera/follow side effects and do not cache feature results.
+  Existing PointF/RectF APIs and their `List<Feature>` results are unchanged.

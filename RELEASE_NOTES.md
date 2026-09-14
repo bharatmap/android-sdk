@@ -1,3 +1,11 @@
+# 1.0.36
+
+Android A11: native rendered-feature screen-shape queries.
+
+New queryRenderedFeatures(List<ScreenCoordinate>, filter, layerIds) returns BharatMapsRenderedFeature with raw Feature and sourceId/sourceLayer/layerId metadata. Supports points, open paths and explicitly closed contours without bounding-box substitution. Native filters, top-to-bottom layer order and per-tile-feature/per-layer deduplication. Existing PointF/RectF APIs remain unchanged.
+
+Source revision: aa9c062. Java/Kotlin compile, 19 shape-query checks and zero-duration tracking regression pass on the final four-ABI AAR. No iOS release. A12 source readiness is not included.
+
 # 1.0.35
 
 Android: fix default system GPS request quality on Android 12+.
