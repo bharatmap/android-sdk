@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.30"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.31"
 }
 ```
 
@@ -1069,6 +1069,11 @@ Install before Start, on main. `startNavigation(DirectionsRoute)` still starts t
 supplied route without a request. When a provider is installed, manual/off-route
 rerouting uses only that provider; failure does not silently fall back to the SDK
 backend. Without a provider, existing SDK rerouting remains available.
+
+Register the provider and listener before the first `startNavigation` if desired.
+The SDK transfers both to the navigation controller when it is first created.
+Changing `setNavigationCalibrationLineEnabled` does not replace the provider,
+replay listener events, or cancel a pending reroute (fixed in 1.0.31).
 
 ```kotlin
 map.setNavigationRerouteProvider { request, completion ->

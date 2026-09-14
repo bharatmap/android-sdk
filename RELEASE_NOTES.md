@@ -1,3 +1,19 @@
+# 1.0.31
+
+Android A02 fix: pre-start reroute provider registration.
+
+- Stored app provider and listener are now applied when EmbeddedNavigation is
+  first created, including Start with an already supplied DirectionsRoute.
+- Changing the calibration-line flag no longer resets the provider, cancels a
+  pending reroute, or replays listener state.
+- No public API changes. A04 offline authorization and iOS are unchanged.
+
+Source revision: `0f8308d` in the SDK source repository.
+Runtime regression reproduces the missing callbacks in published 1.0.30 and
+passes on the fixed AAR: pre-start registration, calibration isolation, cancel,
+late completion, error, successful replacement and stop/late completion.
+The app provider is invoked; no SDK navigation-backend request is observed.
+
 # 1.0.30
 
 Android signed offline authorization (A04).
