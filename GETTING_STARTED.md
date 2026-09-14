@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.32"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.33"
 }
 ```
 
@@ -593,6 +593,50 @@ map.animateMapPadding(leftPx, topPx, rightPx, bottomPx, durationMs = 350)
 // or via BharatMapView facade
 mapView.animateMapPadding(leftPx, topPx, rightPx, bottomPx, durationMs = 350)
 ```
+
+### Atomic camera and padding transition (Android 1.0.33+)
+
+When changing center/zoom/bearing/pitch and viewport padding together, use one
+transition instead of calling `animateMapPadding` and `easeCameraTo` separately.
+Separate camera animations replace each other; they do not compose.
+
+Call on main after `getMapAsync` supplies `BharatMapsMap`:
+
+```kotlin
+val options = BharatCameraTransitionOptions.Builder()
+    .center(Point.fromLngLat(77.24, 28.63))
+    .zoom(14.0)
+    .bearing(25.0)
+    .pitch(30.0)
+    .padding(80, 80, 80, 300) // left, top, right, bottom in px
+    .build()
+
+map.transitionCamera(options, 1000, object : BharatMapsMap.CancelableCallback {
+    override fun onFinish() {
+        // All requested camera and viewport targets have been reached.
+    }
+    override fun onCancel() {
+        // Replaced, explicitly cancelled, interrupted by a gesture, or map stopped/destroyed.
+    }
+})
+
+// Optional explicit cancellation:
+// map.cancelTransitions()
+```
+
+All target fields are optional; omitted fields keep their current values.
+Options are an immutable snapshot. Padding must be nonnegative; numeric targets
+must be finite. Duration <= 0 applies immediately. Native smooth easing is the
+default; `.easing(false)` selects linear interpolation. Custom app interpolators
+are not supported by this API.
+
+The callback is optional. It receives exactly one terminal event on main:
+`onFinish` or `onCancel`, never both. A replacement starts from the currently
+rendered camera. Map stop/destruction cancels an unfinished transition.
+This is an app-owned camera operation: in normal map mode it stops follow without
+hiding the user puck. `centerOnUserLocation` restores follow. Attribution/logo
+margins remain independent. Existing camera methods and route preview behavior
+are unchanged.
 
 ### Logo margins
 

@@ -1,3 +1,11 @@
+# 1.0.33
+
+Android A08: atomic camera and viewport transition.
+
+Public transitionCamera(BharatCameraTransitionOptions, durationMs, callback) combines optional center, zoom, bearing, pitch and padding in one native update. Native easing or linear. Main-thread exactly-once terminal callback on finish, replacement, gesture, cancel, stop or destroy. No custom app interpolator. Existing APIs remain compatible.
+
+Source revision: 0e18bdd. Public Kotlin compile, A08 runtime, A02, A07 and13 license/UI cases pass. iOS and portal unchanged.
+
 # 1.0.32
 
 Android A07: isolate stopped navigation sessions from immediate restart.
