@@ -1,3 +1,17 @@
+# 1.0.32
+
+Android A07: isolate stopped navigation sessions from immediate restart.
+
+- Queued worker results and posted progress/milestone/running events from a
+  stopped trip no longer enter the next session, even with the same route object.
+- Simulated ARRIVED -> Stop -> Start replays both legs from the origin without
+  an app delay or map recreation. App-provider reroute remains available.
+- No public API changes. A02 and all 13 license/UI regression cases pass.
+- iOS and portal are unchanged.
+
+Source revision: `56c71ba`. Baseline on published 1.0.31 reproduces A07;
+fixed runtime traverses both legs in both consecutive trips.
+
 # 1.0.31
 
 Android A02 fix: pre-start reroute provider registration.

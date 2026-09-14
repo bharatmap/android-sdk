@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.31"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.32"
 }
 ```
 
@@ -978,6 +978,12 @@ map.startNavigation(nextOrigin, destinationPoint, options) { route, error ->
 `holdAtDestination=true` keeps the native user-location puck at the last simulated coordinate. `autoStopOnArrival=false` prevents SDK from auto-stopping navigation at arrival. `stopNavigation()` keeps backward-compatible behavior and resets to real/system location. Use `stopNavigation(false)` only when you need to close guidance while keeping the puck on the held simulated location.
 
 ### Stop navigation
+
+After arrival, `stopNavigation()` followed immediately by `startNavigation(route, options)`
+starts a fresh session, even when reusing the same supplied `DirectionsRoute` object.
+Simulation replays from the first leg. Queued progress, milestone and running-state
+events from the stopped session cannot complete the new session. No delay or map
+recreation is required (fixed in 1.0.32).
 
 ```kotlin
 map.stopNavigation()
