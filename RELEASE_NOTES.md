@@ -1,3 +1,29 @@
+# 1.0.30
+
+Android signed offline authorization (A04).
+
+- Existing validateLicense API now restores a previously signed grant after
+  process death and network loss, or HTTP 429/5xx, without extending its expiry.
+- Maximum lifetime is 24 hours, capped by API key/subscription expiry. The permit
+  binds the actual package, APK signing certificate and API-key fingerprint.
+- Authenticated encrypted no-backup storage uses Android Keystore. No raw API key
+  or unsigned authorization flag is persisted.
+- Explicit denial, TLS error, malformed/tampered/foreign/expired permissions and
+  observed clock rollback fail closed. Late or cancelled requests cannot revive
+  a rejected grant. Signed expiry gates the map on main, including after resume.
+- LicenseValidationResult adds validationSource and offlineAvailable metadata.
+- Old online-only server responses remain supported. Existing public
+  BharatMapsMap signatures and A06 main-thread callback behavior are preserved.
+
+Source revision: `099df90` in the SDK source repository. The Android signing
+extension is deployed on the portal; existing iOS issuance is unchanged.
+
+Verification uses an isolated loopback issuer with the actual deployed signer
+and fixed nonproduction claims, plus attached-map runtime tests. It does not
+create server organizations/API-key records, export the private key, or test
+customer-key revocation. Offline authorization does not provide uncached tiles
+or offline REST APIs. iOS artifacts are unchanged.
+
 # 1.0.29
 
 Android navigation API additions (A01, A02, A03, A05 implementation):

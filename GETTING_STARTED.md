@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.29"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.30"
 }
 ```
 
@@ -138,11 +138,59 @@ Notes:
   responses arriving after map destruction report `CancellationException` on the
   main thread without changing the map. A background/foreground transition alone
   does not cancel validation; destroying the map does.
-- optional overload accepts signing hash:
+- The SDK reads the installed APK signing certificate automatically. The optional
+  signing-hash overload must match that certificate (SHA-256, case-insensitive,
+  colon separators accepted). Prefer the overload without a manually supplied hash:
 
 ```kotlin
 map.validateLicense("BMK_TEST_xxx", "ABCD...SHA256") { result, error -> /* ... */ }
 ```
+
+### Signed offline authorization (A04, 1.0.30)
+
+Use the same `validateLicense(apiKey)` on every app launch. No new initialization,
+permissions or application cache is required. A first successful online validation
+with the updated portal returns a signed permission valid for at most **24 hours**,
+shortened by API-key or subscription expiry. It survives process death and restart.
+
+If the network is unavailable, or the portal returns HTTP 429/5xx, the SDK can restore
+that permission for the **same key, installed package and APK signing certificate**.
+It never extends the signed expiry offline. A fresh install without a saved permission
+must connect once. TLS failures, explicit rejection, malformed responses, invalid
+signatures, expired permission, mismatched identity or corrupted storage fail closed.
+An explicit rejection removes the saved permission; going offline cannot undo it.
+
+`LicenseValidationResult.validationSource` is `"online"` or `"offline"`.
+`offlineAvailable` indicates that a signed permission was successfully persisted.
+`expiresAt` is ISO-8601 UTC and `ttlSeconds` is remaining signed lifetime when a
+signed permission is used. An old server with no offline envelope remains online-only.
+
+```kotlin
+map.validateLicense(apiKey) { result, error ->
+    if (error != null || result == null) return@validateLicense
+    val restoredOffline = result.validationSource == "offline"
+    val canRestartOffline = result.isOfflineAvailable
+    // Continue with map setup. Never persist a local "validated" boolean.
+}
+```
+
+The stored envelope is authenticated/encrypted using an app-scoped Android Keystore
+key, excluded from Android backup, and verified against the SDK's pinned P-256 public
+key on restore. No raw API key is stored. APK certificate rotation or changing the
+package/key requires online validation again. Expiry is checked with both wall and
+elapsed time while running; stored time high-water checks reject observed rollback.
+These checks do not claim to resist a rooted/modified app or all offline clock attacks.
+Certificate binding is local permit validation, not remote device attestation.
+
+Callbacks and visibility changes remain on main, including null-callback validation.
+The map is gated when signed authorization expires, including after resume.
+Late/cancelled validation cannot overwrite a newer decision. Authorization is shared
+within the process: a denial/identity change invalidates existing grants; successful
+validation with the same identity does not move the camera.
+
+Offline authorization does not download tiles or make REST search/routing available
+without a network. Revocation is learned at the next successful server contact, or
+access expires at the signed deadline, whichever happens first.
 
 ---
 
