@@ -1,3 +1,11 @@
+# 1.0.37
+
+Android: source-specific native tile readiness.
+
+BharatMapsMap.addOnSourceDataListener/removeOnSourceDataListener and isSourceLoaded expose METADATA/TILE events, readiness, source identity generation and native tile operation. Successfully parsed empty vector tiles count as ready; errors/cancellation do not. Removed/replaced sources and old-style callbacks are rejected, including source removal from a preceding listener. Readiness transitions after fallback-tile cleanup are delivered without requiring another successful download. Active/pending traffic generation switching and timeouts remain application policy. No camera or tracking changes.
+
+Source implementation: 21ffc18; verification: 219393c. Final four-ABI AAR passes Kotlin/Java usage, 21 source-readiness checks, 19 screen-shape query regressions, zero-duration tracking, branding and production offline trust anchor verification. No iOS release.
+
 # 1.0.36
 
 Android A11: native rendered-feature screen-shape queries.

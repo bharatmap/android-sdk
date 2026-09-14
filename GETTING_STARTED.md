@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.36"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.37"
 }
 ```
 
@@ -1253,3 +1253,56 @@ val allHits = map.queryRenderedFeatures(contour, "buildings")
 - Call on the UI thread after the style and desired source tiles have rendered.
   Queries have no camera/follow side effects and do not cache feature results.
   Existing PointF/RectF APIs and their `List<Feature>` results are unchanged.
+
+## Source-specific tile readiness (Android 1.0.37+)
+
+Register on the UI thread before adding the pending source/layers:
+
+```kotlin
+val sourceListener = BharatMapsSourceDataListener { event ->
+    if (event.sourceId == pendingTrafficSourceId &&
+        event.dataType == BharatMapsSourceDataEvent.DataType.TILE &&
+        event.isLoaded && map.isSourceLoaded(event.sourceId)) {
+        // Application-owned policy: reveal this generation, then remove the old one.
+        activatePendingTrafficGeneration()
+    }
+}
+map.addOnSourceDataListener(sourceListener)
+
+// Synchronous native query, also available without a listener:
+val ready = map.isSourceLoaded("traffic-pending")
+
+// Remove the same listener instance when no longer needed.
+map.removeOnSourceDataListener(sourceListener)
+```
+
+`BharatMapsSourceDataEvent` provides `sourceId`, `dataType` (`METADATA` or `TILE`),
+`isLoaded`, `generation`, and nullable `tileOperation`. Callbacks run on the UI
+thread. Metadata/source changes do not report tile readiness. `tileOperation`
+identifies native cache/network requests, load, parse completion, error or
+cancellation; metadata has no tile operation. `NullOp` denotes a source readiness
+transition after updating its tile set (for example, removing unused fallback
+tiles), not a successful download of a particular tile.
+
+Readiness means that the current enabled tiled source has retained tiles and all
+of them have successfully loaded/parsed, with no pending request or failed tile.
+It is **not** feature-count polling, whole-map readiness, or frame completion.
+A successfully parsed empty vector tile counts as ready. Missing sources,
+metadata-only sources, sources without active tiles, and failed/pending tiles do
+not. Readiness applies to the current native tile set, not every tile in the
+world or proof that a frame has reached the display. Camera changes can require
+new tiles and make a previously ready source unready.
+
+Events carry the native source implementation identity across the renderer/UI
+boundary. Removed/replaced-source and previous-style events are rejected. The
+opaque `generation` identifies an observed source implementation within this map;
+compare it only within that map, not across launches. Readiness is a delivery-time
+snapshot, not a promise that a later camera/source change will remain loaded.
+
+For traffic generation switching, keep the old source/layers while the pending
+source loads. The pending source needs an enabled style layer requesting its
+tiles; a layer with `visibility = none` cannot establish readiness. The app owns
+source IDs, active/pending generations, any 12-second timeout, and the decision to
+retain the old generation on error/timeout. The SDK does not switch generations,
+remove old traffic, or move the camera. Existing source-change/tile listeners
+remain available.
