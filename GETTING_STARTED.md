@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.27"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.28"
 }
 ```
 
@@ -121,7 +121,7 @@ map.validateLicense("BMK_TEST_xxx") { result, error ->
         Log.e("BHARAT_LOG", "License validation failed", error)
         return@validateLicense
     }
-    Log.d("BHARAT_LOG", "License OK token=${result?.token}")
+    Log.d("BHARAT_LOG", "License validated")
 }
 ```
 
@@ -130,6 +130,14 @@ Notes:
 - `appId` is auto-filled from app package name
 - validation endpoint: `https://portal.bharat-maps.com/sdk/v1/license/validate`
 - until validation succeeds, SDK keeps map interactions and navigation/location APIs locked
+- Validation performs network I/O off the main thread. Authorization state and map
+  visibility/interactions are applied on the main thread before the callback,
+  including when no callback is supplied. `isLicenseValidated()` reflects the
+  applied result when the callback runs.
+- A newer validation request supersedes older requests. Superseded requests and
+  responses arriving after map destruction report `CancellationException` on the
+  main thread without changing the map. A background/foreground transition alone
+  does not cancel validation; destroying the map does.
 - optional overload accepts signing hash:
 
 ```kotlin
