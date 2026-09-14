@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.28"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.29"
 }
 ```
 
@@ -961,3 +961,111 @@ map.setTripProgressChangedListener { progress ->
     val voiceText = progress.voiceInstructionText
 }
 ```
+
+## Navigation voice and application announcements
+
+Call on the main thread. The mute preference is persisted across maps and process
+restarts, and applied before the first navigation instruction. Muting immediately
+stops current and queued speech. Instruction/progress callbacks continue.
+
+```kotlin
+map.setNavigationVoiceMuted(savedMute)
+map.startNavigation(selectedRoute)
+map.speakNavigationAnnouncement("Approaching your pickup", false)
+// true interrupts and clears the existing queue before adding this announcement.
+map.speakNavigationAnnouncement("Pickup changed", true)
+map.stopNavigationSpeech() // cancel speech without changing the saved mute setting
+map.stopNavigation()       // also clears all current/queued speech
+```
+
+Announcements and instructions share the same SDK speaker and serial TTS queue;
+no second navigation player is required. `speakNavigationAnnouncement` returns
+false if navigation is inactive/arrived, muted, unauthorized or text is empty.
+A true result means submitted, not proof that a device has an installed TTS voice.
+`isNavigationVoiceMuted()` returns the saved preference. `stopNavigationSpeech()`
+does not suppress later instructions; use mute when persistent silence is intended.
+
+## Detailed navigation progress
+
+Existing `TripProgress` fields/constructors remain compatible. SDK-generated values
+also contain `details: BharatNavigationProgress`; `map.getNavigationProgress()`
+returns the latest snapshot for late subscribers (null before start/after stop).
+
+```kotlin
+map.setOnTripProgressChangedListener { progress ->
+    val details = progress?.details ?: return@setOnTripProgressChangedListener
+    val stepId = details.stepId
+    val remaining = details.stepDistanceRemainingMeters
+    val traveled = details.tripDistanceTraveledMeters
+    val maneuver = details.upcomingStep?.maneuver()
+    val geometry = details.upcomingStepCoordinates
+    val bridgeText = details.bridgeInstructionText
+}
+```
+
+`sessionId` changes on a new Start; `routeRevision` increases on route replacement.
+`routeId`, `legId`, `stepId` and `upcomingStepId` remain stable within that revision.
+Leg/step indices are zero-based. Current/upcoming `LegStep` expose maneuver type,
+modifier, location, bearing, names and instruction data; decoded geometries are
+available without app-side map matching. Upcoming step crosses a leg boundary.
+Totals/remaining/traveled distances are meters, durations seconds. Remaining
+waypoints are remaining leg endpoints in order, including the final destination.
+`INITIAL` precedes live `ACTIVE` updates; `ARRIVED` has zero remaining distance and
+is emitted before legacy progress is cleared. The latest detailed ARRIVED snapshot
+remains readable until stop/new start. Bridge text is nullable when no bridge data
+is available from the loaded map; the SDK does not invent missing instructions.
+
+## Application reroute provider
+
+Install before Start, on main. `startNavigation(DirectionsRoute)` still starts the
+supplied route without a request. When a provider is installed, manual/off-route
+rerouting uses only that provider; failure does not silently fall back to the SDK
+backend. Without a provider, existing SDK rerouting remains available.
+
+```kotlin
+map.setNavigationRerouteProvider { request, completion ->
+    val fix = request.location // defensive Location copy, including bearing when known
+    val progress = request.progress
+    val remainingViaAndDestination = progress.remainingWaypoints
+    // Your async backend policy owns bearing retries, ranking and candidate selection.
+    val call = backend.requestRankedRoute(fix, remainingViaAndDestination) { selected, error ->
+        completion.onResult(selected, error)
+    }
+    BharatNavigationReroute.Cancellation { call.cancel() }
+}
+map.setOnNavigationRerouteChangedListener { event ->
+    // STARTED, APPLIED, FAILED or CANCELLED; requestId and captured progress identify it.
+}
+map.requestNavigationReroute() // optional manual trigger; false without an active session/fix
+map.cancelNavigationReroute()
+```
+
+`backend` above is application code, not another SDK navigation player/engine.
+Provider invocation and events run on main; perform network I/O asynchronously.
+Completion may run on any thread and only its first current result is applied.
+Return a cancellation handle (or null for noncancellable work). Cancel/Finish,
+arrival, provider replacement, new Start or a newer reroute invalidate pending
+responses. Late results cannot change the session. Failed reroutes preserve the
+current route. Applied reroutes preserve the session ID, increment route revision
+and update the SDK engine, without an application call to Start.
+
+## Live congestion on the active navigation route
+
+```kotlin
+val route = map.navigationProgress ?: return
+// Exactly one value per adjacent pair in route.routeCoordinates.
+val accepted = map.updateNavigationRouteCongestion(levels, route.sessionId, route.routeRevision)
+// Optional reset, with the same identity guard:
+map.clearNavigationRouteCongestion(route.sessionId, route.routeRevision)
+```
+
+Call on main. Levels are `unknown`, `low`, `moderate`, `heavy`, `severe` (case-sensitive).
+Colors: low/unknown use route accent; moderate #F9A825, heavy #EF6C00, severe #C62828.
+The API returns false without mutation for stale session/revision, wrong count,
+invalid levels, inactive/arrived navigation or calls off main. It updates a dedicated
+source in place above the route and below its markers; it does not Start, request
+routes, reset progress, move camera or interrupt speech. State is reapplied after
+style reload and cleared on reroute/new Start/arrival/stop. Vanishing mode clips
+congestion to the same projected location as the remaining route. Revision identifies
+the route geometry, not the congestion poll; the application should discard older
+poll responses for the same route before calling this API.
