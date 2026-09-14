@@ -28,11 +28,18 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.34"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.35"
 }
 ```
 
 ## 2) Initialize SDK
+
+On Android 12+ the default system location engine forwards SDK priority as explicit
+native request quality (fixed in 1.0.35). HIGH_ACCURACY requests can activate GPS
+even when Android selects its fused provider. Callback/Looper and PendingIntent
+requests also forward interval, fastest interval, displacement and batching.
+Older Android versions retain the legacy registration path. No additional
+location provider or app-side GPS subscription is required.
 
 Initialize once in Activity/Fragment before map usage:
 

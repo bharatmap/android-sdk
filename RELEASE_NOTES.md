@@ -1,3 +1,11 @@
+# 1.0.35
+
+Android: fix default system GPS request quality on Android 12+.
+
+HIGH_ACCURACY is now forwarded explicitly when the system selects the fused provider. Callback/Looper and PendingIntent requests preserve priority, interval, fastest interval, displacement and batching. Older Android retains its existing registration path. No public API or iOS changes.
+
+Source revision: ce433ab. Two fresh emulator system GPS fixes pass through both request paths; map follow and zero-duration tracking regression pass. No auxiliary GPS consumer is required.
+
 # 1.0.34
 
 Android A09: complete zero-duration user tracking transitions.
