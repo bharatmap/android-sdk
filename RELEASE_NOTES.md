@@ -1,3 +1,23 @@
+# 1.0.38
+
+Android A13: retain free-camera intent during active navigation.
+
+Actual user camera gestures, public cameraPosition/overview and app-owned camera
+methods stop following until explicit Recenter or a public tracking-mode request.
+Moving navigation updates, reroute, live congestion and style reload no longer
+force TRACKING_GPS back on. Navigation viewport changes while free wait for the
+next Recenter. Cancelled/obsolete tracking transitions cannot overwrite a newer
+camera or session. centerOnUserLocation restores follow with its requested zoom.
+Guidance, native puck, progress and route rendering remain active while free.
+
+Source revision: 7fdc7a2. Final four-ABI AAR passes actual emulator input pan and
+separate programmatic overview checks over five moving updates, reroute/style/
+congestion, Recenter/interruption, Stop/hold/restart/arrival and real-provider
+restoration. Independent reroute-provider, two-trip restart and zero-duration
+tracking regressions pass, as do branding and production offline trust anchor
+checks. Physical-device smoothness and multi-touch gestures were not tested.
+No iOS or consuming-app changes.
+
 # 1.0.37
 
 Android: source-specific native tile readiness.

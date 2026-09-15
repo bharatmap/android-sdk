@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.37"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.38"
 }
 ```
 
@@ -667,7 +667,7 @@ are not supported by this API.
 The callback is optional. It receives exactly one terminal event on main:
 `onFinish` or `onCancel`, never both. A replacement starts from the currently
 rendered camera. Map stop/destruction cancels an unfinished transition.
-This is an app-owned camera operation: in normal map mode it stops follow without
+This is an app-owned camera operation: in normal and active navigation modes it stops follow without
 hiding the user puck. `centerOnUserLocation` restores follow. Attribution/logo
 margins remain independent. Existing camera methods and route preview behavior
 are unchanged.
@@ -724,6 +724,39 @@ mapView.enableUserLocation()
 ```
 
 When bottom-sheet height changes, call `setNavigationCameraViewport(...)` again. Active navigation follow/recenter uses the latest viewport.
+While navigation is in free-camera mode, this setter stores the viewport for the
+next Recenter without changing the current camera or padding.
+
+### Free camera during navigation (Android 1.0.38+)
+
+Navigation starts following the puck. A user camera gesture (pan, zoom, rotation
+or tilt), `setCameraPosition`, `moveCameraTo`, `animateCameraTo`, `easeCameraTo`,
+`fitCameraToCoordinates`, or `transitionCamera` suspends following. Subsequent
+navigation progress/location updates do not take the camera back. Reroute, live
+congestion and style reload preserve this intent. Guidance, puck movement, voice,
+vanishing route lines and progress callbacks continue normally.
+
+```kotlin
+// Existing public location-component API also explicitly selects free camera.
+map.locationComponent.cameraMode = CameraMode.NONE
+map.cameraPosition = CameraPosition.Builder(map.cameraPosition)
+    .target(LatLng(28.65, 77.25))
+    .zoom(13.0)
+    .bearing(23.0)
+    .padding(doubleArrayOf(31.0, 65.0, 43.0, 90.0))
+    .build()
+
+// No per-frame camera corrections are necessary.
+map.recenterCamera()
+// Or center with an explicit zoom and restore navigation following:
+map.centerOnUserLocation(15.0)
+```
+
+Recenter or an explicit public tracking CameraMode restores following. A new
+Start starts a fresh following session. Stop and arrival retain their existing
+location/calibration behavior; camera callbacks from an older session cannot
+reapply its navigation viewport. `requestRoutePreview(autoFit=false)` remains
+draw-only and does not change camera/follow state.
 
 ### Configure default zoom for center/recenter
 
