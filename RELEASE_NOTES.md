@@ -1,3 +1,25 @@
+# 1.0.39
+
+Android A14: mode-aware navigation location after simulation/real transitions.
+
+currentNavigationLocation no longer prefers a historical replay engine after
+Stop(true) or real Start. currentSimulatedNavigationLocation returns null outside
+active simulation or an intentional hold. Both navigation accessors return
+defensive Location snapshots. Held simulation survives Stop(false)/arrival;
+new Start clears that hold and restores the original user-location engine
+instance for real navigation. Real Stop(false) cannot revive an old simulation.
+Explicit Start after a held arrival resets the previous guidance session instead
+of retaining its arrived leg/step. Route lookup alone does not change simulation
+mode. No public signatures, iOS, backend or consuming-app changes.
+
+Source revision: 430d2ec. Published 1.0.38 baseline reproduced the stale replay
+accessor despite fresh system GPS. Final four-ABI AAR passes simulation -> real,
+real -> simulation -> real, held Stop(false), exact held destination -> real Start
+without a timer delay, moved system GPS, original engine identity, current reroute
+input and defensive snapshots. A13 actual-input/free-camera, two-trip restart and
+reroute cancellation regressions pass. Branding and production trust anchor checks
+pass. Runtime verification is API36/arm64 emulator testing, not physical-device testing.
+
 # 1.0.38
 
 Android A13: retain free-camera intent during active navigation.

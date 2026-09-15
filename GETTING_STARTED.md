@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.38"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.39"
 }
 ```
 
@@ -1087,6 +1087,29 @@ map.startNavigation(nextOrigin, destinationPoint, options) { route, error ->
 ```
 
 `holdAtDestination=true` keeps the native user-location puck at the last simulated coordinate. `autoStopOnArrival=false` prevents SDK from auto-stopping navigation at arrival. `stopNavigation()` keeps backward-compatible behavior and resets to real/system location. Use `stopNavigation(false)` only when you need to close guidance while keeping the puck on the held simulated location.
+
+Android 1.0.39+: `currentNavigationLocation()` selects the current source by mode,
+not by whether a replay engine was used in an earlier trip. It returns simulated
+location while simulating, the held coordinate after simulated Stop(false)/held
+arrival, and real/matched location after Stop(true) or a real Start.
+`currentSimulatedNavigationLocation()` returns null when there is no active
+simulation or intentionally held simulated location. Both getters return defensive
+`Location` snapshots; mutating a returned value does not move the SDK puck or
+change later results.
+
+```kotlin
+map.stopNavigation(true)
+// Immediate restart; no delay, map recreation or location-engine replacement.
+map.startNavigation(backendRoute, BharatNavigationSimulationOptions(false, false, true, 1.0))
+// On subsequent real GPS updates these no longer prefer an old replay position:
+val navigationLocation = map.currentNavigationLocation()
+val simulatedLocation = map.currentSimulatedNavigationLocation() // null
+```
+
+A real Start directly after a held simulated arrival or Stop(false) restores the
+original user-location engine. New Start clears the previous hold. Stop(false)
+after a real trip does not revive a historical simulation. Route fetching alone
+does not switch the active simulation mode.
 
 ### Stop navigation
 
