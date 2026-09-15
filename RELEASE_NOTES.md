@@ -1,3 +1,20 @@
+# 1.0.41
+
+Android A16/A17 follow-up. Source revision: 8ea2efa. No iOS changes or public API changes.
+
+- Fix native source-readiness crash during multi-tile visibility/style changes.
+  Readiness is sampled in a queued render task after tile mutation unwinds, with
+  current-renderer/source-identity validation. UI queries remain nonblocking.
+- Fix interrupted Stop -> Locate and repeated Locate animations. Stale tracking
+  transition callbacks cannot clear/reset a newer transition. Original terminal
+  callbacks, user gesture cancellation and app camera takeover are preserved.
+- Regression fixtures cover the published 1.0.40 failures, multi-tile DARK/LIGHT
+  reloads, source readiness, async queries, exact stop/recenter camera targets,
+  navigation simulation/arrival, free camera, PiP and Cancel.
+
+No app-side recenter loops, delay or style-reload suppression is required.
+Full consuming-app/physical-device acceptance is separate from SDK fixtures.
+
 # 1.0.40
 
 Android A15/A16. Source revision: dd88f8d.

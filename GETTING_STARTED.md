@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.40"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.41"
 }
 ```
 
@@ -472,6 +472,19 @@ val location = map.currentUserLocation()
 val centered = map.centerOnUserLocation()      // default zoom = 14
 val centeredAt16 = map.centerOnUserLocation(16.0)
 ```
+
+Outside active navigation, Locate animates to the user with the requested zoom,
+zero bearing/pitch, and location follow enabled. After stopping navigation it can
+be called immediately, without a delay or repeated recenter loop:
+
+```kotlin
+map.stopNavigation(true)
+map.centerOnUserLocation(16.0)
+```
+
+Since 1.0.41, cancellation callbacks from an older tracking transition cannot
+interrupt a newer Locate transition. A user gesture or an explicit app camera
+movement still cancels the current transition normally; the user puck stays visible.
 
 ### Custom pulse ring
 
@@ -1421,7 +1434,9 @@ snapshot; source event delivery and `isSourceLoaded` never synchronously wait
 for GL. Until the renderer has reported the current native source identity,
 readiness is false. During a renderer stall an existing snapshot may be old;
 this is not a synchronous freshness barrier. Success/empty/error semantics
-remain unchanged.
+remain unchanged. Since 1.0.41, readiness sampling is queued after the current
+renderer task, never performed reentrantly while tile collections are being
+changed or destroyed during source visibility/style changes.
 
 Events carry the native source implementation identity across the renderer/UI
 boundary. Removed/replaced-source and previous-style events are rejected. The
