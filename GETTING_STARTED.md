@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.41"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.42"
 }
 ```
 
@@ -596,6 +596,41 @@ map.fitCameraToCoordinates(
     18.0  // maxZoom
 )
 ```
+
+### Bounds For A Proposed Camera
+
+Since 1.0.42, `getCoordinateBoundsForCamera(camera)` returns geographic bounds
+for a hypothetical `CameraPosition` using the current map viewport size. It does
+not move the live camera, stop tracking, interrupt animations, or emit camera
+callbacks. No second map is created.
+
+```kotlin
+val inputBounds = LatLngBounds.Builder().includes(coordinates).build()
+val intermediateCamera = map.getCameraForLatLngBounds(
+    inputBounds, intArrayOf(50, 50, 50, 50), bearing, pitch
+) ?: return
+val expandedBounds = map.getCoordinateBoundsForCamera(intermediateCamera) ?: return
+val finalCamera = map.getCameraForLatLngBounds(
+    expandedBounds, intArrayOf(20, 120, 30, 220), bearing, pitch
+) ?: return
+// All calculations above are read-only. Apply finalCamera separately if needed.
+```
+
+`coordinates` is a list of `LatLng`. Camera padding is physical pixels in
+left/top/right/bottom order; convert dp before passing it. Null padding means
+zero. Padding shifts the target within the viewport; the returned bounds cover
+the **whole viewport**, not just its unpadded area. All four corners participate
+when bearing or pitch is nonzero. Longitudes are continuous and may extend
+beyond +/-180 across the antimeridian or span multiple world copies at low zoom.
+Do not independently normalize the returned west/east values before a second fit.
+
+Call on the UI thread after layout. An unlaid-out or destroyed map returns null.
+Invalid/incomplete cameras throw `IllegalArgumentException`: values must be
+finite, latitude within +/-85.0511287798066, zoom 0...25.5 and pitch 0...60 degrees.
+Padding must contain four nonnegative values and leave positive viewport space.
+The map's configured native camera constraints still apply. Native viewport size
+is rounded to logical pixels, so allow density-related pixel rounding when
+comparing against physical-screen projections.
 
 Camera behavior:
 - `enableUserLocation()` starts user follow when location is available.

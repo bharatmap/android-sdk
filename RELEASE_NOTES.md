@@ -1,3 +1,19 @@
+# 1.0.42
+
+Android future-camera bounds (A17). Source revision: fb8c809.
+
+- Add `BharatMapsMap.getCoordinateBoundsForCamera(CameraPosition)` for calculating
+  full-viewport geographic bounds without moving the live camera, changing follow,
+  cancelling animations or emitting camera callbacks.
+- Honor target, zoom, bearing, pitch, physical-pixel padding and native constraints
+  using an isolated Transform. Include all four corners and continuous longitudes
+  across the antimeridian, including multiple world copies at low zoom.
+- Document two-stage editor/Live framing, padding semantics, validation and
+  unlaid-out viewport behavior. Java/Kotlin binary fixtures cover portrait,
+  landscape, follow and active animation. Application integration remains separate.
+
+No existing camera API behavior or iOS call sites changed.
+
 # 1.0.41
 
 Android A16/A17 follow-up. Source revision: 8ea2efa. No iOS changes or public API changes.
