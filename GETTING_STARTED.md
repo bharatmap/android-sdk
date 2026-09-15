@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.39"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.40"
 }
 ```
 
@@ -1310,6 +1310,73 @@ val allHits = map.queryRenderedFeatures(contour, "buildings")
   Queries have no camera/follow side effects and do not cache feature results.
   Existing PointF/RectF APIs and their `List<Feature>` results are unchanged.
 
+## Nonblocking rendered queries (Android 1.0.40+)
+
+Use this API for traffic and business-event scans. Existing synchronous shape,
+PointF and RectF queries remain source-compatible, but may wait for the renderer;
+calling them on an unsupported worker thread is not a substitute for this API.
+
+```kotlin
+var pendingQuery: BharatMapsRenderedQuery? = null
+
+fun refreshTraffic() {
+    pendingQuery?.cancel()
+    val sessionId = currentSessionId
+    val revision = currentRouteRevision
+    pendingQuery = map.queryRenderedFeaturesAsync(
+        contour,
+        Expression.eq(Expression.get("highway"), "primary"),
+        { hits, error ->
+            if (error == null && sessionId == currentSessionId && revision == currentRouteRevision) {
+                consumeTraffic(hits.orEmpty())
+            }
+        },
+        "traffic-route-data-layer"
+    )
+}
+// Cancel when the app session/camera scan becomes obsolete or its owner stops.
+pendingQuery?.cancel()
+```
+
+Create/cancel requests on the UI thread. Geometry work runs on the renderer
+thread; completion is posted exactly once to the UI thread, never inline inside
+a style mutation, cancellation or native callback. Success preserves the
+synchronous shape API's geometry, raw properties, source/source-layer/layer
+metadata, native filter, deduplication and topmost-first ordering. No camera,
+follow, navigation session or route mutations are performed.
+
+Cancellation, destroyed/unavailable surface, style replacement, changed relevant
+native source/layer identity, layer ordering changes and timeout return a
+non-null error and null results, not a successful empty list. Up to 8 requests
+may be outstanding; requests time out after 5 seconds without waiting for GL.
+A native source identity refers to the data already applied to the style, not
+an asynchronously queued GeoJSON payload. Cancel/reissue on application-owned
+traffic generation, session/revision or camera changes; correlate the callback
+with captured app state as in the example. SDK cancellation does not move cameras.
+
+## Authoritative bridge roads (Android 1.0.40+)
+
+Bridge instructions query only the bundled style's road LineLayers in source
+`composite` and known road source-layers. Application traffic, route and overlay
+features are excluded even when they contain `highway` or `gid`. No raw properties
+are removed or renamed. Custom styles can opt into their authoritative layers:
+
+```kotlin
+map.setNavigationRoadLayerIds("my-road-lines", "my-road-labels")
+// Configure before starting navigation; this selection survives style reload.
+// Empty varargs disable rendered bridge matching.
+map.setNavigationRoadLayerIds()
+// Null restores bundled-style defaults (Java: setNavigationRoadLayerIds((String[]) null)).
+```
+
+The matcher refreshes asynchronously while navigating and discards obsolete
+step/style requests. It chooses the nearest eligible road geometry, with a
+stable tie-break independent of overlay ordering. At coincident intersections
+without a road identifier in route steps this remains a geometric heuristic;
+the SDK cannot infer a missing authoritative road identity. Genuine missing/F
+bridge metadata produces no bridge instruction. The first voice sentence can
+wait up to 750 ms for road data; existing voice cooldowns are preserved.
+
 ## Source-specific tile readiness (Android 1.0.37+)
 
 Register on the UI thread before adding the pending source/layers:
@@ -1325,7 +1392,7 @@ val sourceListener = BharatMapsSourceDataListener { event ->
 }
 map.addOnSourceDataListener(sourceListener)
 
-// Synchronous native query, also available without a listener:
+// Nonblocking latest renderer-confirmed snapshot, also available without a listener:
 val ready = map.isSourceLoaded("traffic-pending")
 
 // Remove the same listener instance when no longer needed.
@@ -1348,6 +1415,13 @@ metadata-only sources, sources without active tiles, and failed/pending tiles do
 not. Readiness applies to the current native tile set, not every tile in the
 world or proof that a frame has reached the display. Camera changes can require
 new tiles and make a previously ready source unready.
+
+Since 1.0.40 readiness is computed on the renderer thread and delivered as a
+snapshot; source event delivery and `isSourceLoaded` never synchronously wait
+for GL. Until the renderer has reported the current native source identity,
+readiness is false. During a renderer stall an existing snapshot may be old;
+this is not a synchronous freshness barrier. Success/empty/error semantics
+remain unchanged.
 
 Events carry the native source implementation identity across the renderer/UI
 boundary. Removed/replaced-source and previous-style events are rejected. The

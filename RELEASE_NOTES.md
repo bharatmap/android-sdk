@@ -1,3 +1,31 @@
+# 1.0.40
+
+Android A15/A16. Source revision: dd88f8d.
+
+- Bridge instructions use authoritative bundled road layers rather than the first
+  rendered highway property. Custom styles can use setNavigationRoadLayerIds.
+  Traffic properties, navigation session/revision and route data are not modified.
+- queryRenderedFeaturesAsync provides renderer-thread geometry queries with A11
+  raw metadata/filter/order semantics, UI-thread completion, cancellation,
+  style/source-generation validation, a 5-second deadline and bounded concurrency.
+  Completion is posted outside native/style/destruction stacks and revalidated
+  immediately before delivery. Existing synchronous queries remain compatible.
+- Source readiness is computed on the renderer thread; events and isSourceLoaded
+  no longer synchronously wait for GL. The getter reads the latest matching
+  renderer-confirmed snapshot. A12 parsed/empty/error/generation rules remain.
+
+Android release build includes four ABIs. SDK fixture regressions cover native
+queries/readiness, authoritative bridge/traffic coexistence, actual PiP enter /
+return and Cancel Yes on host GPU and SwiftShader, plus A13/A14 navigation modes.
+A deterministic 6.5-second GL delay leaves the UI heartbeat and readiness getter
+responsive. Documentation includes the async migration and snapshot contracts.
+
+Important: applications must migrate synchronous business/traffic scans to the
+new async API and correlate requests with their own session/camera/generation.
+Full consuming-app and physical-device A16 acceptance is still required; this
+release does not claim that emulator GPU stalls or all lifecycle waits are fixed.
+No iOS or consuming-app changes.
+
 # 1.0.39
 
 Android A14: mode-aware navigation location after simulation/real transitions.
