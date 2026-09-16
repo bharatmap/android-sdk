@@ -29,6 +29,9 @@ jobs:
         run: |
           test -f "${GITHUB_WORKSPACE}/releases/bharatmaps-android-${{ steps.version.outputs.version }}.aar"
 
+      - name: Validate 16 KB ELF LOAD and RELRO alignment
+        run: python3 scripts/check-android-16kb.py "releases/bharatmaps-android-${{ steps.version.outputs.version }}.aar"
+
       - name: Prepare gh-pages worktree
         run: |
           git fetch origin gh-pages

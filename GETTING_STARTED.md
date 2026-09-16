@@ -28,9 +28,17 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.43"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.44"
 }
 ```
+
+### 16 KB native alignment
+
+Version 1.0.44 explicitly aligns both ELF LOAD segments and the end of GNU_RELRO
+to 16 KB. Use AGP 8.5.1 or newer for uncompressed native-library packaging and
+verify the final APK with `zipalign -c -P 16 4 app.apk`. AAR alignment does not
+replace final APK packaging and runtime tests. Existing public APIs are unchanged.
+See [Android page-size requirements](https://developer.android.com/guide/practices/page-sizes#check-relro).
 
 ## 2) Initialize SDK
 

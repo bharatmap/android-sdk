@@ -1,3 +1,13 @@
+# 1.0.44
+
+Android 16 KB GNU_RELRO alignment (A19). Source revision: 8019fce.
+
+- Explicitly align LOAD segments and GNU_RELRO end to 16 KB.
+- Preserve RELRO protection, public APIs and existing behavior. Android only.
+- Add release CI validation of all arm64/x86_64 ELF libraries.
+- Previous successful 1.0.43 runtime checks remain valid; this addresses the
+  documented static ELF mismatch, not a reproduced runtime crash.
+
 # 1.0.43
 
 Android offline loopback tile requests (A18). Source revision: dd1e8b1.
