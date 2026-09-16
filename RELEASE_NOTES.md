@@ -1,3 +1,19 @@
+# 1.0.43
+
+Android offline loopback tile requests (A18). Source revision: dd1e8b1.
+
+- Native HTTP(S) requests to explicit localhost, canonical 127/8 and [::1]
+  authorities are no longer suspended solely because external connectivity is
+  offline. Remote resources retain their normal offline scheduling.
+- No global network-state override, licensing changes or camera/layer changes.
+  Cache/retry/cancellation and HTTP cleartext/TLS policies remain unchanged.
+- Document application-owned local tile servers and required offline style assets.
+  Binary fixtures reproduce the 1.0.42 failure and verify uncached native tile
+  requests, rendered features, LIGHT/DARK reloads and process restart with
+  Wi-Fi/data disabled. Real application MBTiles/signed-license acceptance is separate.
+
+Android only; no iOS behavior change or artifact release.
+
 # 1.0.42
 
 Android future-camera bounds (A17). Source revision: fb8c809.

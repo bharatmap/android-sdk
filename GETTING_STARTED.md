@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.42"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.43"
 }
 ```
 
@@ -198,6 +198,35 @@ validation with the same identity does not move the camera.
 Offline authorization does not download tiles or make REST search/routing available
 without a network. Revocation is learned at the next successful server contact, or
 access expires at the signed deadline, whichever happens first.
+
+### Same-device Tile Servers Without Internet
+
+Since Android 1.0.43, native HTTP(S) resource requests to `localhost`,
+`localhost.`, canonical dotted-decimal `127.0.0.0/8`, or `[::1]` are not suspended
+merely because Wi-Fi/cellular connectivity is absent. This supports an
+application-owned loopback MBTiles server through ordinary `VectorSource` and
+`TileSet` APIs. No network-state override or extra SDK toggle is required.
+
+```kotlin
+val tiles = TileSet("2.1.0", "http://localhost:8888/local/{z}/{x}/{y}.pbf")
+style.addSource(VectorSource("offline-local", tiles))
+// Add the application's layers referencing "offline-local" and their source-layer IDs.
+```
+
+The application must start its server, provide downloaded tiles, and restore
+its sources/layers after a style reload. Other required style assets (including
+sprites and glyphs) must also be locally available/cached; this exception does
+not fetch missing remote assets offline. Cleartext policy for HTTP and normal
+certificate validation for HTTPS still apply. Non-loopback hosts, LAN addresses
+and aliases that happen to resolve to loopback retain normal offline scheduling.
+Use the explicit forms above, not shortened/octal/encoded IP spellings.
+The effective resource URL is checked after URL transformation. Retry/backoff,
+cache policy and request cancellation are unchanged; no camera/follow/layer
+ordering changes are made by this connectivity exception.
+
+Licensing remains mandatory: an offline cold launch requires an unexpired
+previously saved signed authorization. This does not make REST search/navigation
+or remote tile servers available offline. A local server is not a license bypass.
 
 ---
 
