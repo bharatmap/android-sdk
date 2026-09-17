@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.44"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.45"
 }
 ```
 
@@ -1131,6 +1131,13 @@ map.startNavigation(origin, destination) { route, error ->
 ```
 
 `setNavigationRouteVanishingEnabled(false)` is the default for backward compatibility. This affects only the SDK-owned active navigation route. It does not disable app-owned route polylines, route progress callbacks, maneuver callbacks, custom user puck, or navigation camera.
+
+Since 1.0.45, traversal updates the existing route source without clearing it or
+replacing the guidance route. The passed origin and passed via markers disappear;
+unpassed waypoints and the destination remain at their original locations. A new
+route/preview resets traversal, while a style reload preserves it. Route casing
+and congestion features share the remaining geometry. No new route request or
+navigation session is created by display-only trimming.
 
 For taxi/driver apps with multiple simulated legs, use simulation options:
 

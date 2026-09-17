@@ -1,3 +1,14 @@
+# 1.0.45
+
+Android navigation vanishing route source updates (A20). Source: 0d0787a9.
+
+- Update remaining route and casing in place without clearing the source on ticks.
+- Retain original guidance route identity; hide passed origin/via, retain destination.
+- Preserve traversal on style reload and reset it for new routes/previews.
+- Cancel superseded async work and rebind style-restored progress/arrow listeners.
+- Renderer source-state regression covers ticks, traffic, waypoints and lifecycle.
+- Android only; no public high-level API or iOS changes.
+
 # 1.0.44
 
 Android 16 KB GNU_RELRO alignment (A19). Source revision: 8019fce.
