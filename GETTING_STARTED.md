@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.45"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.46"
 }
 ```
 
@@ -692,6 +692,13 @@ mapView.setCameraInteractionListener(object : BharatMapCameraInteractionListener
 This listener is user-only. Programmatic camera calls such as `fitCameraToCoordinates`, `centerOnUserLocation`, `recenterCamera`, and route preview camera fitting do not trigger it.
 
 ### Map padding (instant + animated)
+
+In normal map mode, `centerOnUserLocation(...)` and `recenterCamera()` preserve
+the current viewport padding, including asymmetric insets. Locate restores follow
+and resets bearing/pitch without resetting padding. The no-fix fallback also
+preserves the viewport. Active navigation retains its separate navigation viewport
+contract. Version 1.0.46 removes the normal-mode Locate call that requested zero
+tracking padding; applications do not need a delayed padding replay.
 
 Set map viewport padding instantly (pixels). This affects the camera viewport, not the BharatMaps logo:
 

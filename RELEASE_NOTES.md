@@ -1,3 +1,14 @@
+# 1.0.46
+
+Android Locate viewport padding (A21). Source: 085e411a.
+
+- Remove the zero-padding tracking request from normal-mode centerOnUserLocation.
+- Preserve app viewport padding without changing navigation viewport, puck,
+  tracking transition, requested zoom or bearing/pitch reset.
+- Public-API padding regression fixture passes; physical-app Stop/Home
+  acceptance must be repeated by the consuming app.
+- Android only; iOS unchanged.
+
 # 1.0.45
 
 Android navigation vanishing route source updates (A20). Source: 0d0787a9.
