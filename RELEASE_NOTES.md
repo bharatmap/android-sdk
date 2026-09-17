@@ -1,3 +1,14 @@
+# 1.0.47
+
+Android navigation Stop/Home padding race (A21 follow-up). Source: a21b06be.
+
+- Cancel superseded tracking-padding animations on app viewport changes and tracking-mode changes.
+- Prevent navigation teardown from zeroing padding after Home/Locate.
+- Reproduced on published 1.0.46; fixed regression covers actual simulated navigation Start/Stop, repeated Locate and instant/animated padding.
+- Preserve puck, normal follow, requested zoom/orientation and navigation viewport defaults.
+- Vanishing-route renderer regression and both ABI 16 KB ELF checks pass.
+- Android only. Physical consuming-app acceptance is separate from SDK emulator verification.
+
 # 1.0.46
 
 Android Locate viewport padding (A21). Source: 085e411a.

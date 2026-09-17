@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.46"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.47"
 }
 ```
 
@@ -697,8 +697,10 @@ In normal map mode, `centerOnUserLocation(...)` and `recenterCamera()` preserve
 the current viewport padding, including asymmetric insets. Locate restores follow
 and resets bearing/pitch without resetting padding. The no-fix fallback also
 preserves the viewport. Active navigation retains its separate navigation viewport
-contract. Version 1.0.46 removes the normal-mode Locate call that requested zero
-tracking padding; applications do not need a delayed padding replay.
+contract. Version 1.0.47 also cancels superseded tracking-padding animations when
+the app calls `setMapPadding` / `animateMapPadding` or tracking mode changes.
+This prevents a pending navigation Stop animation from later overwriting Home
+viewport padding. Applications do not need a delayed padding replay.
 
 Set map viewport padding instantly (pixels). This affects the camera viewport, not the BharatMaps logo:
 
