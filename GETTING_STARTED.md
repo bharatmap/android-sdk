@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.47"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.48"
 }
 ```
 
@@ -1454,6 +1454,15 @@ A native source identity refers to the data already applied to the style, not
 an asynchronously queued GeoJSON payload. Cancel/reissue on application-owned
 traffic generation, session/revision or camera changes; correlate the callback
 with captured app state as in the example. SDK cancellation does not move cameras.
+
+Since Android 1.0.48, unrestricted queries work with the live native location
+puck enabled. Its continuously updated GeoJSON data is treated as a rendered
+snapshot, not as source replacement. Results still include matching location
+features with their metadata; the SDK does not exclude location layers or use a
+synchronous fallback. Actual source removal/replacement (including remove/re-add
+of the same object), style replacement, and relevant ordinary source/layer
+changes still invalidate pending results. Do not disable location or enumerate
+private location-layer IDs to query roads, buildings or POIs.
 
 ## Authoritative bridge roads (Android 1.0.40+)
 

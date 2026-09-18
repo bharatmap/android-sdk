@@ -1,3 +1,14 @@
+# 1.0.48
+
+Android live-location async rendered queries (A22). Source: a4ffe4f1.
+
+- Treat continuous native location-source data updates as rendered snapshots instead of invalidating all unrestricted queries.
+- Preserve matching puck features, raw geometry/properties, metadata and topmost ordering; no layer exclusions or synchronous fallback.
+- Retain strict ordinary source/layer validation and detect actual style/source remove/re-add with a structural revision.
+- Regression reproduces 30/30 generation errors on 1.0.47 and verifies 30/30 successful full-viewport queries with animated location on the fix.
+- Pan, source replacement/mutation, cancellation, style reload, timeout and main-thread responsiveness checked in SDK fixture.
+- Android only. Physical Studio Edit existing acceptance remains a separate consuming-app check.
+
 # 1.0.47
 
 Android navigation Stop/Home padding race (A21 follow-up). Source: a21b06be.
