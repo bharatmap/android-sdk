@@ -1,3 +1,11 @@
+# 1.0.49
+
+- Remove only the legacy house_number style layer from bundled default/light style.json.
+- Dark and simplified styles, sources, other layers and public APIs are unchanged.
+- No replacement source is added in this release; server/Martin migration is separate.
+
+Source revision: 6011f17e6660d2afd30faad53b75620075e0d11e.
+
 # 1.0.48
 
 Android live-location async rendered queries (A22). Source: a4ffe4f1.
