@@ -80,10 +80,12 @@ mapView.getMapAsync { map ->
 
 ## 4A) Built-in map styles
 
-Since 1.0.50, the default/light style loads house numbers from the separate
+Since 1.0.51, all four built-in styles (light, dark, light simplified and dark simplified)
+load house numbers from the separate
 `martin_house_numbers` vector source (MVT layer `house_number`, z16 tiles with
 overzoom). Existing house-number styling and tap callbacks are preserved;
-`address` may be absent. Dark and simplified styles are unchanged. Server data
+`address` may be absent. Each style retains its own house-number colors, layout
+and visibility zoom thresholds. Server data
 updates do not push a redraw of tiles already loaded by the map.
 
 Supported enum values:
