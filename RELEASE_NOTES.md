@@ -1,3 +1,13 @@
+# 1.0.50
+
+- Restore the original house_number symbol layer in default/light style, with its original placement, minzoom, layout and paint.
+- Load it from martin_house_numbers: https://map.bharat-maps.com/martin/v1/house_number/{z}/{x}/{y}.pbf (MVT Point, source-layer house_number, z16 tiles with overzoom).
+- Keep dark/simplified styles and other labels unchanged. Existing tap mapping accepts house_number and optional address; raw MVT feature ids retain gid.
+- Server updates do not push automatic redraws of already-loaded tiles. No new API or application changes.
+- Candidate iOS simulator verifies rendered features, id/properties, tap dispatch, UPin and reload. Android verification covers build/resources/network and 16 KB alignment, not runtime rendering. No physical-device test.
+
+Source revision: 92d865e2d259f7f5e159aea8ab060342658b1ec2.
+
 # 1.0.49
 
 - Remove only the legacy house_number style layer from bundled default/light style.json.
