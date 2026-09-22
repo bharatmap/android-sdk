@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.48"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.53"
 }
 ```
 
@@ -103,6 +103,9 @@ map.refreshHouseNumbers() // Optional manual catch-up while active.
 Disabling polling cancels feed requests, not normal map loading. Manual catch-up
 also works with polling disabled. These methods must run on the UI thread.
 Updates are eventual, not instantaneous; network/polling latency applies.
+
+Version 1.0.53 increases only house-number text size from 8.5 to 9.5 in all
+four built-in styles. Other label sizes and zoom thresholds are unchanged.
 
 Supported enum values:
 - `BharatMapStyle.LIGHT`

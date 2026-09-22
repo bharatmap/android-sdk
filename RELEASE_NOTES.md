@@ -1,3 +1,12 @@
+# 1.0.53
+
+- Increase only house-number text-size by 1 (8.5 to 9.5) in all four built-in styles.
+- Other label sizes, zoom thresholds and styling are unchanged.
+- This Android release does not change house-number snapshot persistence or refresh behavior; the restart correction is iOS-only.
+- Release build, packaged style comparisons and 16 KB native alignment checks passed.
+
+Source revision: 7a09b98a2cd94c97dcf89c402c9a966388180cf5.
+
 # 1.0.52
 
 - Automatically refresh Martin house numbers in all four styles while a licensed map is active.
