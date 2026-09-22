@@ -1,3 +1,12 @@
+# 1.0.52
+
+- Automatically refresh Martin house numbers in all four styles while a licensed map is active.
+- Refresh only changed canonical tiles; retain old content during loading/network errors, support deletion and fence stale responses.
+- Add automatic-refresh toggle and manual refresh API; preserve camera, UPin and tap behavior.
+- Native renderer, lifecycle and production Martin smoke checks passed on both platforms. Physical-device smoothness was not tested.
+
+Source revision: 91ed74da0c084d1fb14db157607a13548e24a8f3.
+
 # 1.0.51
 
 - Load house numbers from Martin in all four built-in styles, including dark and simplified variants.
