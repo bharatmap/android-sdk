@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.53"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.54"
 }
 ```
 
@@ -106,6 +106,37 @@ Updates are eventual, not instantaneous; network/polling latency applies.
 
 Version 1.0.53 increases only house-number text size from 8.5 to 9.5 in all
 four built-in styles. Other label sizes and zoom thresholds are unchanged.
+
+### Automatic detailed-road updates (1.0.54)
+
+All four built-in styles use `martin_roads` for detailed roads at canonical zoom
+13 through 16, with overzoom above 16. Low-zoom roads, railway layers and
+airport/legacy alias layers keep their existing sources and styling.
+
+```kotlin
+map.setRoadsAutoRefreshEnabled(true) // Default.
+val enabled = map.isRoadsAutoRefreshEnabled()
+map.refreshRoads() // Optional manual catch-up, including with polling disabled.
+```
+
+The same methods are available on `BharatMapView`. Call on the UI thread.
+Automatic polling runs only while the licensed map is active. Road refresh
+updates affected tile revisions without replacing the style, moving the camera
+or modifying navigation/follow state. Normal tile loading remains enabled when
+polling is disabled. Network errors retry without clearing previously rendered
+data; an empty tile removes its old features.
+
+Road cursor, baseline and per-tile revisions are saved together and restored
+before rendering after restart. State is scoped to the tile-source URLs and is
+independent of house-number refresh. Offline rendering requires cached tiles;
+these methods do not download an offline region.
+
+Feature-query consumers should identify roads using `(table_no, gid)`, not gid
+alone. The original gid property is retained; the MVT feature identifier is
+globally unique across physical road partitions. Source-layer names and style
+layer IDs remain unchanged, but detailed-road source IDs are now `martin_roads`
+instead of `composite`. Built-in bridge matching accepts both sources and uses
+the table/gid pair, with compatibility fallback for old data without table_no.
 
 Supported enum values:
 - `BharatMapStyle.LIGHT`
