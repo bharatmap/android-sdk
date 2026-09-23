@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.54"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.55"
 }
 ```
 
@@ -1606,3 +1606,37 @@ source IDs, active/pending generations, any 12-second timeout, and the decision 
 retain the old generation on error/timeout. The SDK does not switch generations,
 remove old traffic, or move the camera. Existing source-change/tile listeners
 remain available.
+
+## Martin Session Protection (1.0.55)
+
+For registered applications whose validated license contains
+`martinProtection.mode = required`, the SDK automatically prepares a Play Integrity
+session and signs Martin roads and house-number TileJSON, change-feed and tile
+requests with installation-bound DPoP. Call the normal `validateLicense` API
+independently of map/style readiness. Do not wait for tiles before validating the
+license and do not implement app-owned token refresh or signing interceptors.
+
+Registration requires the package name, Play App Signing SHA256 certificate,
+allowed version policy and linked Google Cloud project. The project number is
+provided by the server's license configuration, not inferred from Firebase.
+The default policy requires a recognized, licensed Play-distributed installation
+with device integrity. An adb-installed debug build does not prove these verdicts.
+Missing configuration or failed evidence denies protected requests; no anonymous
+fallback is used when protection is required.
+
+The SDK uses Play Integrity 1.6.0 as a dependency. Installation P-256 keys stay in
+Android Keystore. Installation metadata is stored in
+`Context.noBackupFilesDir/bharat-martin-<scope>` and must not be copied between
+installations. If the Keystore key is absent, stale metadata is discarded. Session
+refresh/provider recovery is SDK-owned and does not depend on activity resume or
+application license retry timers. Work queues are bounded and the main thread is
+not blocked by attestation/network waits.
+
+Legacy `/data/production` authentication is unchanged. Subtiles are excluded.
+Revision query parameters/cache identities remain unchanged; authorization stays
+in headers. Auth errors do not become empty tiles or feed deletion events.
+
+This opt-in transport is available from 1.0.55; it is absent from 1.0.54.
+Existing license configurations without Martin protection retain their behavior.
+Production activation requires joint issuer/gateway/SDK checks and real
+Play-distribution verification. Adding the dependency alone does not activate it.

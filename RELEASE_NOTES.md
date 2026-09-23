@@ -1,3 +1,13 @@
+# 1.0.55
+
+- Adds opt-in installation-bound Martin session protection: Play Integrity 1.6.0 and Android Keystore, ES256 DPoP, SDK-owned refresh and bounded recovery.
+- Existing licenses without Martin protection retain current behavior. Installing this release does not enable production enforcement. Server registration and real platform attestation validation are required before activation.
+- Credentials stay in headers; roads/house-number URLs and revision/cache identity are preserved. Legacy production tiles and subtiles are unchanged.
+- Binary artifact smoke and resource checks passed using provider fixtures; this does not claim real production attestation.
+- Maven includes Play Integrity transitively; both 64-bit native ABIs pass 16 KB alignment checks.
+
+Source revision: 5fb9acf36f1bc57fb299e51a0e181e699c249151.
+
 # 1.0.53
 
 - Increase only house-number text-size by 1 (8.5 to 9.5) in all four built-in styles.
