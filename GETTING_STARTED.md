@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.57"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.58"
 }
 ```
 
@@ -1753,3 +1753,47 @@ subscribe again when needed. Cancellation releases the listener and suppresses
 queued callbacks; a callback already in flight may finish. It does not cancel
 shared transport. Background expiry is reflected in the next main-thread delivery
 or subscription replay. No application UI, camera or follow behavior is changed.
+
+### Explicit Developer Installation Access (1.0.58)
+
+An ADB/Android Studio installation can use Martin only after an administrator
+explicitly pairs that installation. This is a separate administrative access
+method, **not Play Integrity or verified hardware attestation**. Default SDK
+behavior remains Play Integrity; neither a debug flag nor a failed Play check
+creates a grant. No shared development secret belongs in the application.
+
+```kotlin
+// Explicit development configuration only, before normal license validation.
+BharatMaps.setMartinDeveloperAccessEnabled(BuildConfig.DEBUG && developerAccessOptIn)
+
+// After successful license validation, including when Martin reports DENIED:
+BharatMaps.getMartinDeveloperIdentity { identity ->
+    if (identity != null) {
+        // Transfer through a trusted local developer channel to the administrator.
+        // These are PUBLIC values, never an API key or private signing key.
+        val appId = identity.appId
+        val publicJwk = identity.publicKeyJwk
+        val thumbprint = identity.thumbprint
+    }
+}
+```
+
+The callback runs on the main thread. A null identity means that opt-in/validated
+license is unavailable, the license changed, the queue is full or the key could
+not be loaded. There is no cancellation handle; a destroyed UI owner should
+ignore its late callback. Identity retrieval uses the shared worker and can wait
+for an ongoing authorization request. It does not require mapLoaded or READY.
+
+The administrator approves that exact public-key thumbprint for the existing
+Android app, tenant and API-key ID, for at most seven days. After approval, retry
+normal online license validation or restart the app. Normal SDK transport signs
+fresh one-use challenges and uses short-lived DPoP-bound sessions. Expired,
+revoked, unapproved or differently scoped installations fail closed. No fallback
+from production Play authentication occurs automatically.
+
+Developer keys/installation metadata are separate from production and diagnostic
+identities. Same-signer ADB updates retain them; uninstalling/clearing app data or
+losing the Keystore key requires explicit re-pairing. Do not uninstall to recover
+an authorization error. Opt-in is process-local and defaults to false. Setting
+it to false restores the separate normal Play identity. User location, camera,
+styles and navigation behavior are not changed.

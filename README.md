@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.57"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.58"
 }
 ```
 

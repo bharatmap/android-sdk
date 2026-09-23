@@ -1,3 +1,14 @@
+# 1.0.58
+
+- Add explicit developer-installation Martin access for Android Studio/ADB use, requiring an administrator-approved, expiring grant for the exact installation public key, application, tenant and API-key ID.
+- Public opt-in and public pairing identity API; separate persistent Android Keystore namespace, signed one-use challenges, short-lived DPoP-bound sessions. No shared APK secret or automatic Play-denial fallback.
+- Default production Play Integrity behavior is unchanged. Developer pairing is administrative authorization, not Play or hardware attestation.
+- 32 issuer tests passed, including actual PostgreSQL revocation/issuance serialization, expiry, replay, exact challenge signatures and token lifetime cap. Full release AAR emulator fixtures passed for normal transport, diagnostics, authorization observer and developer pairing.
+- All four styles preserved, both native ABIs pass 16 KB alignment checks. Physical installation approval/production map acceptance is coordinated separately; no app publication.
+
+Source revision: 436f4e0b6078319f6b10d58104884c5b5ce53f43.
+AAR SHA256: 5066e1a7a6442fc89d7093c96a2b25a284d2ed525e9ad73533ddbb39ce0ff975.
+
 # 1.0.57
 
 - Add public normal-session `BharatMaps.addMartinAuthorizationListener` with immutable snapshots and cancellable subscriptions, independent of the explicit attestation diagnostic.
