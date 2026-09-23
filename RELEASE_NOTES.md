@@ -1,3 +1,14 @@
+# 1.0.57
+
+- Add public normal-session `BharatMaps.addMartinAuthorizationListener` with immutable snapshots and cancellable subscriptions, independent of the explicit attestation diagnostic.
+- Main-thread latest-state replay, duplicate suppression, license-generation fencing and a bounded 45-second initial authorization outcome. READY describes session authorization, not map rendering.
+- Report issuer denial, temporary failure, session expiry and rejected tokens without exposing credentials. Late success and normal retries can recover; cancellation releases the listener without cancelling shared transport.
+- Full-AAR emulator fixtures passed for transport, diagnostics, replay, timeout/late success, expiry/recovery, stale generation, token rejection and subscription lifecycle. Synthetic provider tests do not certify genuine Play attestation or production protected-map E2E.
+- All four Martin styles preserved; both native ABIs pass 16 KB alignment checks. No app UI, camera or production policy changes.
+
+Source revision: 6f9cfd19786ec21e0ed88f5f090fe5cefb6f821a.
+AAR SHA256: 30082979847c223e608aaf975513ae57db68c6acac369f78b42caf04a57bcbf3.
+
 # 1.0.56
 
 - Add public `BharatMaps.runMartinAttestationDiagnostic(callback)` with sanitized status/exchange count, main-thread completion, cancellation and a 90-second deadline.

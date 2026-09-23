@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.56"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.57"
 }
 ```
 
@@ -1697,3 +1697,59 @@ Play-distributed app matching the registered package, Play app-signing certifica
 and minimum version, and enabled issuer policy/Google credentials. Emulator or
 sideloaded success is not assumed. Success is **issuer/attestation verification,
 not protected tile transport or gateway/cache-HIT end-to-end acceptance**.
+
+### Normal Martin Authorization State (1.0.57)
+
+Observe the shared SDK session before validating the license or loading the map.
+This observer is independent of the explicit attestation diagnostic. It never
+exposes tokens, attestation evidence, API keys or installation identifiers.
+
+```kotlin
+import com.bharatmaps.android.BharatMaps
+import com.bharatmaps.android.MartinAuthorization
+
+private var martinAuthorization: MartinAuthorization.Subscription? = null
+
+private fun observeMartinAuthorization() {
+    martinAuthorization?.cancel()
+    martinAuthorization = BharatMaps.addMartinAuthorizationListener { snapshot ->
+        when (snapshot.status) {
+            MartinAuthorization.Status.DENIED,
+            MartinAuthorization.Status.RETRYABLE_FAILURE -> {
+                // End indefinite loading UI and offer an application-owned recovery action.
+                showMapAuthorizationError(snapshot.errorCode.name)
+            }
+            else -> Unit
+        }
+    }
+}
+
+override fun onDestroy() {
+    martinAuthorization?.cancel()
+    martinAuthorization = null
+    super.onDestroy()
+}
+```
+
+`getMartinAuthorizationState()` returns the current immutable snapshot.
+Statuses are `LICENSE_UNAVAILABLE`, `DISABLED`, `PREPARING`, `READY`, `DENIED`,
+`RETRYABLE_FAILURE`. Error codes are `NONE`, `LICENSE_NOT_VALIDATED`,
+`CONFIGURATION_INVALID`, `SERVER_DENIED`, `UNAVAILABLE`, `TIMEOUT`, `SESSION_EXPIRED`.
+`DISABLED` means the validated license does not require Martin protection.
+`READY` means issuer/session authorization, **not mapLoaded or successful rendering**.
+Resource loading and map lifecycle callbacks remain separate.
+
+Callbacks run on the main thread, including asynchronous initial replay. This is
+an observer of the latest state, not a lossless event history: superseded queued
+snapshots are suppressed. Identical states are deduplicated and stale license
+configurations cannot publish a result into a new configuration. Initial required
+session preparation has a 45-second outcome deadline; a late valid result may
+recover `TIMEOUT` to `READY`. Session expiry/token rejection stops reporting READY.
+Transient recovery can occur on subsequent requests; successful online license
+validation explicitly retries preparation without changing security policy.
+
+Cancel on owner destruction (or onStop if only observing while visible), then
+subscribe again when needed. Cancellation releases the listener and suppresses
+queued callbacks; a callback already in flight may finish. It does not cancel
+shared transport. Background expiry is reflected in the next main-thread delivery
+or subscription replay. No application UI, camera or follow behavior is changed.
