@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.55"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.56"
 }
 ```
 
@@ -1640,3 +1640,60 @@ This opt-in transport is available from 1.0.55; it is absent from 1.0.54.
 Existing license configurations without Martin protection retain their behavior.
 Production activation requires joint issuer/gateway/SDK checks and real
 Play-distribution verification. Adding the dependency alone does not activate it.
+
+### Explicit Martin Attestation Diagnostic (1.0.56)
+
+For operator-controlled acceptance testing, run a single issuer diagnostic after
+`validateLicense` succeeds. It does not depend on map loading and reuses the SDK's
+validated license context. Never call it automatically on each launch or location
+update. It works with an enabled registered server policy even when `required=false`.
+The server supplies the Cloud project in its authenticated challenge; applications
+must not fabricate a required license response or call transport internals.
+
+```kotlin
+import com.bharatmaps.android.BharatMaps
+import com.bharatmaps.android.MartinAttestationDiagnostic
+
+private var attestationCheck: MartinAttestationDiagnostic.Operation? = null
+
+// Explicit operator action, only after license validation succeeds.
+fun checkAttestation() {
+    attestationCheck = BharatMaps.runMartinAttestationDiagnostic { result ->
+        // Always main thread. Inspect lifecycle before touching an Activity view.
+        val succeeded = result.status == MartinAttestationDiagnostic.Status.SUCCESS
+        val verifiedExchanges = result.completedExchanges // 0, 1, or 2
+        // Only sanitized outcomes are returned: no keys, tokens or provider bodies.
+    }
+}
+
+// For example, when the owning Activity is destroyed:
+fun cancelAttestationCheck() {
+    attestationCheck?.cancel()
+    attestationCheck = null
+}
+```
+
+The operation has a 90-second work deadline and exactly one main-thread callback,
+including cancellation. Only one diagnostic runs at a time; concurrent calls return
+`BUSY`. Before license validation it returns `LICENSE_UNAVAILABLE`. Other statuses
+are `SUCCESS`, `CANCELLED`, `TIMEOUT`, `DENIED`, `UNAVAILABLE`, and
+`CONFIGURATION_CHANGED`. `completedExchanges` preserves partial success.
+
+Success means two verified issuer exchanges, the second using fresh Play evidence
+and refresh. The first may also be refresh if this diagnostic installation was
+previously enrolled. A dedicated persistent Android Keystore/no-backup namespace
+keeps this identity separate from regular SDK transport. Transient Play token
+errors have a bounded same-key/request-hash retry; an interrupted issuer exchange
+can recover using the same PoP identity, not a new registration. No access tokens
+are returned, logged or attached to map resources by this diagnostic.
+
+Cancellation stops further client work but cannot undo a server request that was
+already accepted. The callback can arrive after Activity destruction; retain no
+view references unnecessarily. The SDK does not change camera, navigation, user
+location, normal Martin protection mode or the resource interceptor configuration.
+
+Prerequisites: supported Android device with Play Store/Play services, a licensed
+Play-distributed app matching the registered package, Play app-signing certificate
+and minimum version, and enabled issuer policy/Google credentials. Emulator or
+sideloaded success is not assumed. Success is **issuer/attestation verification,
+not protected tile transport or gateway/cache-HIT end-to-end acceptance**.

@@ -1,3 +1,15 @@
+# 1.0.56
+
+- Add public `BharatMaps.runMartinAttestationDiagnostic(callback)` with sanitized status/exchange count, main-thread completion, cancellation and a 90-second deadline.
+- Explicit operator-run issuer diagnostic works with an optional registered server policy, using server-provided Cloud project configuration and isolated persistent installation keys.
+- Two fresh issuer exchanges do not enable the map resource interceptor or change camera, location, navigation or normal protection mode. No keys/tokens/provider response bodies are exposed.
+- Bounded transient recovery retains the same PoP identity; cancellation and changed license context stop further work.
+- 29 server tests and full-AAR Android runtime fixtures passed, including cancellation, timeout, lost-response recovery and unchanged normal transport. Provider fixtures do not certify real Play attestation or protected tile E2E.
+- Both shipped 64-bit ABIs pass 16 KB ELF LOAD/RELRO checks. Play Integrity 1.6.0 remains transitive.
+
+Source revision: 485ba4de10868c412182a58395c0e407bd2272f1.
+AAR SHA256: 9013f0ddc9b0b65570e50cb4d9e219d0ade1ec8999cb461770cd7773027c3035.
+
 # 1.0.55
 
 - Adds opt-in installation-bound Martin session protection: Play Integrity 1.6.0 and Android Keystore, ES256 DPoP, SDK-owned refresh and bounded recovery.
