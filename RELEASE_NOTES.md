@@ -1,3 +1,14 @@
+# 1.0.59
+
+- All four styles use authenticated Martin POIs: one merged layer containing all 13 datasets, canonical zoom 16 with overzoom. Existing house-number Martin integration is preserved.
+- Add POI layer registry and source-scoped automatic/manual refresh with persistent tile revisions and offline restart support.
+- Preserve theme visibility and restore it after UPin; keep POI taps and route layering compatible.
+- Category icons support exact codes, canonical fallback and a generic icon.
+- Fix nullable POI/building distance conversion when user location is unavailable.
+- Builds, native fixture/runtime and offline checks passed. Physical production authorization and CDN invalidation acceptance remain pending; no production-device acceptance is claimed.
+
+Source revision: 0040b4f40996f611ab4c3495d4deb6fb95531b99.
+
 # 1.0.58
 
 - Add explicit developer-installation Martin access for Android Studio/ADB use, requiring an administrator-approved, expiring grant for the exact installation public key, application, tenant and API-key ID.
