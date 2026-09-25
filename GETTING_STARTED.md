@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.62"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.63"
 }
 ```
 
@@ -1830,6 +1830,10 @@ it to false restores the separate normal Play identity. User location, camera,
 styles and navigation behavior are not changed.
 
 ## Martin Basemap Layers
+
+Version 1.0.63 restores the continuous longitudinal railway stroke in every theme.
+The existing transverse sleeper pattern, colors, widths, layer order and zoom
+visibility remain unchanged; no application changes are required.
 
 All four bundled themes use the shared `martin_basemap` vector source for water
 areas, waterways, India's outline, state boundaries, railways, landuse polygons,

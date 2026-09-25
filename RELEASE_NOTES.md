@@ -1,3 +1,10 @@
+# 1.0.63
+
+- Restore continuous railway strokes in all four themes by removing two invalid single-element dash arrays. Sleepers and other styling remain unchanged.
+- Verified with synthetic and real-tile native rendering on iOS and Android.
+
+Source revision: b41e522a022f33e83e810b9e6eaac3b202f1bac3.
+
 # 1.0.62
 
 - Migrate eleven basemap datasets to one authenticated Martin vector source (water, waterways, India outline, state boundaries, railways, landuse, trees, country/state labels) in all four themes.
