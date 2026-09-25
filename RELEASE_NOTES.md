@@ -1,3 +1,12 @@
+# 1.0.61
+
+- Fix four dormant tertiary/unclassified bridge layers to use the existing Martin road source in all themes, preserving their public layer IDs.
+- Prevent duplicate bridge surfaces by excluding bridge=yes from the corresponding ordinary line bodies/casings; add the missing unclassified bridge casing.
+- Keep labels, arrows, low-zoom roads, non-bridge roads and missing-bridge-property features unchanged. No new source scopes or server policies.
+- Both native renderers passed 24 isolated cases across four themes and six zoom boundaries; both release builds and packaged styles verified. Physical-device/production-transport acceptance is not claimed by these fixtures.
+
+Source revision: 566044a47a28920c6f01aa77c0a973aa4b1ba387.
+
 # 1.0.60
 
 - Migrate only sub-locality labels and building names to independent authenticated Martin sources in all four themes. Other administrative labels remain unchanged.

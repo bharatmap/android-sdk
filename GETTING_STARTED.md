@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.60"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.61"
 }
 ```
 
@@ -1854,3 +1854,11 @@ map.refreshBuildingNames();
 `isAdminPointsAutoRefreshEnabled()` and `isBuildingNamesAutoRefreshEnabled()`
 report the toggles. Automatic refresh defaults to enabled. Manual refresh can
 catch up while active even when automatic polling is disabled.
+
+### Bridge road styling (1.0.61)
+
+Tertiary and unclassified bridge surfaces and centerlines now use the Martin
+road source in all themes. Existing style-layer IDs are retained. Ordinary
+road surfaces and casings exclude bridge features to avoid duplicate styling;
+road labels, directional arrows and low-zoom roads are unchanged. No new API
+or source permission is required.
