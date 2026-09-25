@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.61"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.62"
 }
 ```
 
@@ -1828,6 +1828,29 @@ losing the Keystore key requires explicit re-pairing. Do not uninstall to recove
 an authorization error. Opt-in is process-local and defaults to false. Setting
 it to false restores the separate normal Play identity. User location, camera,
 styles and navigation behavior are not changed.
+
+## Martin Basemap Layers
+
+All four bundled themes use the shared `martin_basemap` vector source for water
+areas, waterways, India's outline, state boundaries, railways, landuse polygons,
+trees, country names and state names. Canonical tiles cover zooms 0 through 16;
+higher map zooms reuse zoom-16 tiles. Existing layer IDs, zoom visibility, colors,
+filters and simplified-theme visibility are preserved.
+
+Basemap revisions refresh independently while the licensed map is active. Tiles
+update in place; neither the style nor the camera is reset. Revision snapshots
+survive restart and remain separate from other Martin source families. Access
+requires the server-issued `basemap` permission; the SDK cannot grant permissions.
+
+```kotlin
+map.setBasemapAutoRefreshEnabled(true) // Default.
+map.refreshBasemap() // Also works when auto refresh is disabled.
+val enabled = map.isBasemapAutoRefreshEnabled()
+```
+
+The same methods are available on `BharatMapView`. This migration excludes village
+polygons, world polygons, sea polygons, building footprints, airports, low-zoom
+roads and other locality labels.
 
 ## Martin Administrative and Building Labels
 

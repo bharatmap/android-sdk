@@ -1,3 +1,13 @@
+# 1.0.62
+
+- Migrate eleven basemap datasets to one authenticated Martin vector source (water, waterways, India outline, state boundaries, railways, landuse, trees, country/state labels) in all four themes.
+- Preserve all 52 existing style layer IDs, visual settings, filters, ordering and zoom ranges. Village polygons and unrelated legacy sources are excluded.
+- Add independent basemap automatic/manual refresh with bounded persistent revisions at canonical zooms 0 through 16; no camera, tracking or whole-style reset.
+- Existing approved app policies explicitly include basemap; other applications and default scopes are unchanged. Older SDK clients remain compatible with the expanded token claims.
+- Both release builds, source protocol tests, Swift API typecheck and 28 real-MVT native render cases per platform passed. Physical-device production attestation is not claimed.
+
+Source revision: 13679a96a0cebee7022686823dfcefaad640f27a.
+
 # 1.0.61
 
 - Fix four dormant tertiary/unclassified bridge layers to use the existing Martin road source in all themes, preserving their public layer IDs.
