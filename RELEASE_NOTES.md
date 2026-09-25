@@ -1,3 +1,13 @@
+# 1.0.60
+
+- Migrate only sub-locality labels and building names to independent authenticated Martin sources in all four themes. Other administrative labels remain unchanged.
+- Preserve existing layer IDs, styling, ordering and fractional visibility thresholds; building names remain hidden in simplified themes.
+- Add independent automatic/manual refresh controls for administrative points and building names, with persistent multi-zoom tile revisions. No camera changes or unrelated cache purge.
+- Existing approved application policies explicitly include the new scopes; default permissions for other applications are unchanged.
+- Both platform builds, Swift interface, Android protocol suites, style compatibility and issuer tests passed. Physical-device production acceptance is not claimed.
+
+Source revision: 019db91ff58a2b15175af3f9b8a2f7db44c6688b.
+
 # 1.0.59
 
 - All four styles use authenticated Martin POIs: one merged layer containing all 13 datasets, canonical zoom 16 with overzoom. Existing house-number Martin integration is preserved.

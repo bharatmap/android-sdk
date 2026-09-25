@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.59"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.60"
 }
 ```
 
@@ -1828,3 +1828,29 @@ losing the Keystore key requires explicit re-pairing. Do not uninstall to recove
 an authorization error. Opt-in is process-local and defaults to false. Setting
 it to false restores the separate normal Play identity. User location, camera,
 styles and navigation behavior are not changed.
+
+## Martin Administrative and Building Labels
+
+Version 1.0.60 migrates only `offline_admin_sub_locality` and
+`admin_sub_locality_2` to `martin_admin_points` (canonical zooms 11–15),
+and `house_name` to `martin_building_names` (canonical zooms 15–16).
+Other country/state/district/locality labels remain unchanged. Layer IDs,
+ordering, appearance and fractional visibility thresholds are preserved;
+`house_name` stays hidden in simplified themes. UPin restores that declared
+visibility. Building taps still return POI results, not building-number results.
+
+Both sources refresh independently while the licensed map is active and preserve
+their own revision snapshots across restarts. Updates do not change the camera
+or purge unrelated source caches. Existing server policies must explicitly grant
+`admin_points` and `building_names`; no anonymous fallback is used.
+
+```java
+map.setAdminPointsAutoRefreshEnabled(true);
+map.setBuildingNamesAutoRefreshEnabled(true);
+map.refreshAdminPoints();
+map.refreshBuildingNames();
+```
+
+`isAdminPointsAutoRefreshEnabled()` and `isBuildingNamesAutoRefreshEnabled()`
+report the toggles. Automatic refresh defaults to enabled. Manual refresh can
+catch up while active even when automatic polling is disabled.
