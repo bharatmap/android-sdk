@@ -1,3 +1,12 @@
+# 1.0.65
+
+- Preserve caller custom puck drawables, style-image names, icon scales, accuracy visibility and pulse settings across navigation Start, Recenter, reroute, arrival and Stop.
+- Apply tracking-mode defaults without replacing the caller's visual style. Explicit accent clear retains default-tint behavior without replacing custom images.
+- Native regression: 38 checks passed, including lifecycle/camera checks and rendered custom-puck snapshots. Physical-device driving and OS PiP acceptance remain separate.
+
+Source revision: 42e857de6257f6e32197cc3cbb286dff163e573b.
+Fix revision: 4361656f358491f7a7795f3a5a25a6792ecedfe5.
+
 # 1.0.64
 
 - Prevent raw provider updates from overwriting matched navigation puck/camera locations; preserve the original engine and restore normal rendering on Stop/arrival.

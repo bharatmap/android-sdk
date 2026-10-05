@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.64"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.65"
 }
 ```
 
@@ -907,6 +907,12 @@ mapView.enableUserLocation()
 ```
 
 When bottom-sheet height changes, call `setNavigationCameraViewport(...)` again. Active navigation follow/recenter uses the latest viewport.
+
+Navigation Start, Recenter, reroute, arrival and Stop preserve custom puck
+drawables/style-image names, icon scales, accuracy visibility and pulse settings
+configured through `LocationComponent.applyStyle`. Navigation still controls its
+tracking mode and viewport. Explicit accent changes continue to control SDK tint
+colors; clearing the accent restores default tint colors without replacing images.
 While navigation is in free-camera mode, this setter stores the viewport for the
 next Recenter without changing the current camera or padding.
 
