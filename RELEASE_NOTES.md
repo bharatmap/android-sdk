@@ -1,3 +1,13 @@
+# 1.0.64
+
+- Prevent raw provider updates from overwriting matched navigation puck/camera locations; preserve the original engine and restore normal rendering on Stop/arrival.
+- Restore stored navigation viewport after resume and map resize without overriding free-camera intent.
+- Stabilize small stationary real-navigation display jitter without filtering progress/instruction/route-trimming inputs. Simulation behavior is preserved.
+- Android-only patch. Native camera regression: 26 checks passed; full-navigation location-source regression: 53 checks passed on the candidate. Physical-device driving and production PiP acceptance remain separate.
+
+Source revision: 812e30a87ec75592af44c38d7292543cddd94f10.
+Fix revision: b3a27290cafa8a8cb2bdc0ebc2d20bc52862957b.
+
 # 1.0.63
 
 - Restore continuous railway strokes in all four themes by removing two invalid single-element dash arrays. Sleepers and other styling remain unchanged.

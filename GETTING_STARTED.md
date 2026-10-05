@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.63"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.64"
 }
 ```
 
@@ -909,6 +909,21 @@ mapView.enableUserLocation()
 When bottom-sheet height changes, call `setNavigationCameraViewport(...)` again. Active navigation follow/recenter uses the latest viewport.
 While navigation is in free-camera mode, this setter stores the viewport for the
 next Recenter without changing the current camera or padding.
+
+Android 1.0.64+: following navigation reapplies the latest stored
+viewport after resume and map-size changes, including PiP/fullscreen transitions.
+Supply measured sheet insets after layout; the SDK cannot infer the app's sheet
+height. Resume does not recenter a camera that the user has stopped following.
+
+During active guidance, matched navigation locations drive the puck and camera;
+ordinary provider callbacks cannot overwrite them. The original location engine
+is retained, and normal map rendering resumes on Stop/arrival. Real navigation
+also suppresses small display-only stationary jitter when reported speed is below
+0.5 m/s within an accuracy-based radius bounded to 2..8 m. Missing speed does not
+freeze the display; movement outside that radius or speed at least 0.5 m/s releases
+the hold. Bearing is held only after a moving fix with a bearing, not from an
+arbitrary first stationary course. Navigation progress, route trimming and
+instruction inputs are not filtered; simulation remains unchanged.
 
 ### Free camera during navigation (Android 1.0.38+)
 
