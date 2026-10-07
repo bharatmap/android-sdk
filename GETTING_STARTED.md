@@ -908,6 +908,15 @@ mapView.enableUserLocation()
 
 When bottom-sheet height changes, call `setNavigationCameraViewport(...)` again. Active navigation follow/recenter uses the latest viewport.
 
+The follow anchor is the center of the padded map viewport: `x = (width + left - right) / 2`,
+`y = (height + top - bottom) / 2`, in map-local pixels. The SDK does not know where
+an application zoom bar is placed; derive the viewport from your control layout.
+An app-owned `transitionCamera(...)` call intentionally stops follow, even if only
+zoom changes. To adjust zoom without leaving an existing tracking mode, use
+`map.locationComponent.zoomWhileTracking(zoom)` while following. Do not invoke it
+in free-camera mode. `recenterCamera()` restores navigation follow. The SDK does
+not schedule a timeout to resume follow after gestures; that policy belongs to the app.
+
 Navigation Start, Recenter, reroute, arrival and Stop preserve custom puck
 drawables/style-image names, icon scales, accuracy visibility and pulse settings
 configured through `LocationComponent.applyStyle`. Navigation still controls its
