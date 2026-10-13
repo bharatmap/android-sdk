@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.67"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.68"
 }
 ```
 
@@ -1965,3 +1965,9 @@ Simulated `holdAtDestination` holds the road-route endpoint. The original off-ro
 destination remains the calibration target. Real walking after arrival is not
 snapped back to the route. Active route animation follows intermediate vertices;
 off-route fixes are not forcibly projected onto distant route geometry.
+
+Navigation position follows the route segments; puck and follow-camera bearing
+rotate continuously along the shortest angular arc instead of jumping at a
+vertex. Angular settling can continue after a position update completes. A new
+fix resumes from the displayed angle. This does not change navigation viewport,
+free-camera/recenter ownership, or the rendered-location listener contract.

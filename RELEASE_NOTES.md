@@ -1,3 +1,12 @@
+# 1.0.68
+
+- Fix the 1.0.67 regression that snapped navigation camera and puck bearing at route vertices. Keep position on the polyline; rotate over the shortest angular arc with a bounded rate, starting from the rendered angle on every retarget.
+- Continue angular settling after the position animation finishes. Preserve free-camera ownership, north-up mode, navigation viewport/anchor, route trimming and arrival rendered-location observers.
+- New frame-by-frame angular assertions reproduce approximately 90-degree jumps on both published 1.0.67 artifacts and pass on this fix. Pure tests cover wrap, 90/180-degree turns, retargets and delayed frames.
+- Emulator/simulator checks are not physical-device driving or frame-pacing acceptance. Existing unrelated Android visual-anchor limitations remain outside this patch.
+
+Source revision: 32338dd6cf19b7f5fe02ebb32e649ae6f7b991df.
+
 # 1.0.67
 
 - Animate SDK-owned navigation puck and attached camera along the original route segments, rather than cutting corners between sparse location updates. Match bearing, remaining route and live congestion to the rendered sample.
