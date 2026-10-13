@@ -1,3 +1,14 @@
+# 1.0.66
+
+- Synchronize active vanishing route and live congestion with the rendered puck sample on each animation frame, including free-camera mode.
+- Preserve confirmed Android bridge instructions within the maneuver and route revision; reject stale results. iOS continues to use step-owned bridge metadata.
+- Add follow-only adaptive navigation zoom with maneuver/speed hysteresis. Manual camera takeover is not undone by adaptive zoom.
+- Add opt-in simulation variableSpeedEnabled, default false. Existing constant-speed simulation API remains compatible.
+- Verified Android native fixture (361 frames, zero geographic separation), replay/zoom policy tests, iOS delegate/image fixtures (516/517 frames), iOS anchor fixture (963 frames), Swift API and release builds.
+- Physical-device smoothness remains unverified. Existing Android visual-anchor fixture failures also reproduce on 1.0.65; these are not claimed as passing acceptance. iOS active-navigation programmatic camera ownership semantics are unchanged; gestures release follow and recenter restores it.
+
+Source revision: 52281f7b069132ab5f532077720e19ffc0316656.
+
 # 1.0.65
 
 - Preserve caller custom puck drawables, style-image names, icon scales, accuracy visibility and pulse settings across navigation Start, Recenter, reroute, arrival and Stop.

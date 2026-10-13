@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.65"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.66"
 }
 ```
 
@@ -1268,6 +1268,30 @@ and congestion features share the remaining geometry. No new route request or
 navigation session is created by display-only trimming.
 
 For taxi/driver apps with multiple simulated legs, use simulation options:
+
+Active navigation vanishing geometry (including congestion) uses the displayed
+puck animation sample rather than the next GPS target. Trimming continues after
+a camera gesture without restoring camera follow.
+
+Navigation follow zoom adapts to speed and proximity to the next maneuver, with
+hysteresis and delayed zoom-out. It does not take camera ownership back after a
+gesture or app-owned camera movement; call `recenterCamera()` to restore follow.
+
+Variable-speed replay is opt-in through the new five-argument constructor:
+
+```kotlin
+val variableReplay = BharatNavigationSimulationOptions(true, true, false, 1.0, true)
+// The last argument is variableSpeedEnabled. Existing four-argument calls keep it false.
+map.startNavigation(driverPoint, pickupPoint, variableReplay) { route, error ->
+    if (error != null) return@startNavigation
+}
+```
+
+This deterministic testing profile accelerates after maneuvers and brakes before
+the next maneuver; `speedMultiplier` scales the whole profile. It is preserved on
+reroute and is not a traffic model. Confirmed bridge metadata remains authoritative
+for its maneuver and route revision even if rendered tiles temporarily disappear;
+a new maneuver or reroute resets it.
 
 ```kotlin
 val options = BharatNavigationSimulationOptions(
