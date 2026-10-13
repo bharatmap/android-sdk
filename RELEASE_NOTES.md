@@ -1,3 +1,13 @@
+# 1.0.67
+
+- Animate SDK-owned navigation puck and attached camera along the original route segments, rather than cutting corners between sparse location updates. Match bearing, remaining route and live congestion to the rendered sample.
+- Keep distant off-route fixes unsnapped; bound route intervals and use distance hints at repeated coordinates. Cancel the old route animation when rerouting.
+- Add independent rendered user-location snapshot/observers for app-owned overlays. Subscription supplies the current snapshot and remains active after arrival for walking or simulation hold.
+- Simulated hold retains the road-route endpoint. The original off-road destination remains the calibration target. Raw navigation progress/location semantics stay separate.
+- Isolated native Android/iOS runtime fixtures, curved-path policy tests, release builds and public API compilation verified. Physical-device driving/walking smoothness is not claimed; prior Android visual-anchor limitations remain outside this change.
+
+Source revision: d3781b1f0da3a8b1862c2de17e3c527445ee84f3.
+
 # 1.0.66
 
 - Synchronize active vanishing route and live congestion with the rendered puck sample on each animation frame, including free-camera mode.

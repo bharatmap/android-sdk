@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.66"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.67"
 }
 ```
 
@@ -1943,3 +1943,25 @@ road source in all themes. Existing style-layer IDs are retained. Ordinary
 road surfaces and casings exclude bridge features to avoid duplicate styling;
 road labels, directional arrows and low-zoom roads are unchanged. No new API
 or source permission is required.
+
+### Rendered user location for overlays
+
+Use the rendered coordinate, not `currentNavigationLocation()`, when a line must
+start at the visible puck. Register on the main thread; listeners receive an
+immediate snapshot if available and subsequent display-frame positions, including
+after arrival. This does not replace navigation progress or GPS accuracy data.
+
+```kotlin
+val renderedListener = BharatMapsMap.OnRenderedUserLocationChangedListener { location ->
+    updateCalibrationOverlay(location.latitude, location.longitude)
+}
+map.addOnRenderedUserLocationChangedListener(renderedListener)
+val snapshot = map.currentRenderedUserLocation()
+// When the overlay finishes:
+map.removeOnRenderedUserLocationChangedListener(renderedListener)
+```
+
+Simulated `holdAtDestination` holds the road-route endpoint. The original off-road
+destination remains the calibration target. Real walking after arrival is not
+snapped back to the route. Active route animation follows intermediate vertices;
+off-route fixes are not forcibly projected onto distant route geometry.
