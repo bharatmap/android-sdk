@@ -1,3 +1,12 @@
+# 1.0.69
+
+- Avoid duplicate type labels in named flyover/underpass instructions: `Gopalpura Flyover` no longer becomes `Gopalpura Flyover flyover`.
+- Recognize whole-word types case-insensitively, including Fly Over/Fly-over, Under Pass/Under-pass and bridge for the flyover codes. Preserve names, punctuation and keep-left/right direction; do not match substrings such as Cambridge or Underpassage.
+- Use the same base instruction for public bridgeInstructionText and speech. Empty names and non-named bridge/lane/waterstream instructions retain their existing behavior. Existing speech whitespace normalization is unchanged.
+- Android-only patch; no app-side cleanup or API changes required. Camera/navigation timing and iOS are unchanged.
+
+Source revision: c96f4cfa9fb647a78d8d674192391732a5bdbaf5.
+
 # 1.0.68
 
 - Fix the 1.0.67 regression that snapped navigation camera and puck bearing at route vertices. Keep position on the polyline; rotate over the shortest angular arc with a bounded rate, starting from the rendered angle on every retarget.

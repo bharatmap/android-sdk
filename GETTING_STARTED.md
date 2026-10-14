@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.68"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.69"
 }
 ```
 
@@ -1971,3 +1971,18 @@ rotate continuously along the shortest angular arc instead of jumping at a
 vertex. Angular settling can continue after a position update completes. A new
 fix resumes from the displayed angle. This does not change navigation viewport,
 free-camera/recenter ownership, or the rendered-location listener contract.
+
+### Named flyover and underpass instructions
+
+The public `bridgeInstructionText` and spoken instruction share the same base
+text. For take-flyover codes (`T`, `5`), names already containing the whole word
+`flyover` (also `Fly Over` / `Fly-over`) or `bridge` are kept without appending a
+second type. For take-underpass (`2`), the same rule applies to `underpass`,
+`Under Pass` and `Under-pass`. Matching is case-insensitive and punctuation-aware;
+original name spelling and keep-left/right direction are preserved. Substrings
+such as `Cambridge` and `Underpassage` do not count as a type.
+
+Examples: `Gopalpura Flyover` becomes `Keep right to take Gopalpura Flyover`;
+`Gopalpura` becomes `Keep right to take Gopalpura flyover`. Empty names retain the
+generic instruction. Avoid-flyover/underpass, waterstream and lane instructions
+are unchanged. No application-side text cleanup is necessary.
