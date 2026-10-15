@@ -1,3 +1,12 @@
+# 1.0.70
+
+- Load the dummy_sea layer from the existing Martin basemap source in all four bundled themes.
+- Preserve dummy_sea_polygon, layer order, styling and zoom range 13..24. The vector source remains canonical 0..16 and supports overzoom above 16.
+- No public API or application integration changes are required. POI data expansion uses the existing poi layer and requires no additional SDK changes.
+- Verified all four themes at zoom 13/15/16 and overzoom 17 on a physical Pixel 8a using captured coastal Mumbai MVT and the release AAR. Existing Martin transport fixtures passed through the local Maven staging and its transitive dependencies. All 44 packaged navigation instruction cases also passed on that device. Production attestation and authorized endpoint acceptance remain separate.
+
+Source revision: b132de4d318c8d30b45dc66353e7e5c65d0a5b5e.
+
 # 1.0.69
 
 - Avoid duplicate type labels in named flyover/underpass instructions: `Gopalpura Flyover` no longer becomes `Gopalpura Flyover flyover`.
