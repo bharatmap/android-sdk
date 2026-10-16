@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.70"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.71"
 }
 ```
 
@@ -39,6 +39,26 @@ to 16 KB. Use AGP 8.5.1 or newer for uncompressed native-library packaging and
 verify the final APK with `zipalign -c -P 16 4 app.apk`. AAR alignment does not
 replace final APK packaging and runtime tests. Existing public APIs are unchanged.
 See [Android page-size requirements](https://developer.android.com/guide/practices/page-sizes#check-relro).
+
+## Authenticated data requests (1.0.71)
+
+Register your application ID with its API key in the Developer Portal and validate
+that license through the existing map initialization API. The SDK registers its
+installation key and refreshes short-lived access tokens automatically. Third-party
+apps do not need to configure App Attest or a Google Cloud project. Apps explicitly
+configured for Apple/Google verification retain that requirement.
+
+`BharatMapsDataClient` provides search, housing, nearby, reverse and UPin requests.
+Search and housing accept `q`, `lat`, `lon`; nearby accepts `category`, `lat`, `lon`
+and an optional `limit` (1–100); reverse accepts `lat`, `lon`; UPin accepts `q`.
+Responses use the existing `hits.hits` envelope with public fields. UPin search does
+not return private personalized delivery details. HTTP 429 and `Retry-After` report
+shared quotas; do not immediately retry quota denials. Built-in reverse geocoding
+uses the same authenticated client.
+
+Use `BharatMapsDataClient.request(Operation, JSONObject, Callback)`. Keep the returned
+`Cancellation` and cancel it when its screen or search becomes obsolete. Dispatch
+UI work from callbacks to the main thread.
 
 ## 2) Initialize SDK
 

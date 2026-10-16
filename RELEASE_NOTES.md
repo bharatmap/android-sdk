@@ -1,3 +1,15 @@
+# 1.0.71
+
+- Add the public BharatMapsDataClient for signed search, housing, nearby, reverse and public UPin requests, with cancellation and server quota responses.
+- Automatically enroll licensed third-party applications using a per-installation signing key and short-lived sessions. Existing first-party Apple/Google verification remains required; this mode does not claim platform attestation.
+- Bind request signatures to the exact method, URL and JSON bytes. Do not retry quota denials automatically.
+- Route built-in reverse geocoding through the authenticated data client and remove its embedded Elasticsearch credentials.
+- Server-side shared quotas and onboarding are deployed separately. Older published SDK versions and legacy application endpoints remain supported during migration.
+
+- Verified the release AAR through Maven dependency resolution and a physical Pixel: signed data, automatic licensed enrollment, refresh/retry, cancellation and quota handling. Issuer/HTTP responses in these device tests are fixtures; production API and Worker acceptance were checked separately. AAR/APK 16 KB alignment, public API, source revision and removal of embedded reverse-geocoding credentials also passed.
+
+Source revision: 5e4f0586d861c149eb6cbded16a2613582d68674.
+
 # 1.0.70
 
 - Load the dummy_sea layer from the existing Martin basemap source in all four bundled themes.
