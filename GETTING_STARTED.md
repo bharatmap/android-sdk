@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.71"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.72"
 }
 ```
 
@@ -40,21 +40,37 @@ verify the final APK with `zipalign -c -P 16 4 app.apk`. AAR alignment does not
 replace final APK packaging and runtime tests. Existing public APIs are unchanged.
 See [Android page-size requirements](https://developer.android.com/guide/practices/page-sizes#check-relro).
 
-## Authenticated data requests (1.0.71)
+## Authenticated data requests (1.0.72)
 
-Register your application ID with its API key in the Developer Portal and validate
-that license through the existing map initialization API. The SDK registers its
-installation key and refreshes short-lived access tokens automatically. Third-party
-apps do not need to configure App Attest or a Google Cloud project. Apps explicitly
-configured for Apple/Google verification retain that requirement.
+Initialize and validate the existing SDK license before making data requests.
+Production access currently requires an enabled first-party application policy and
+Apple/Google attestation. Web and third-party access are disabled by server policy.
+A license key alone does not grant protected data access.
 
 `BharatMapsDataClient` provides search, housing, nearby, reverse and UPin requests.
 Search and housing accept `q`, `lat`, `lon`; nearby accepts `category`, `lat`, `lon`
-and an optional `limit` (1–100); reverse accepts `lat`, `lon`; UPin accepts `q`.
-Responses use the existing `hits.hits` envelope with public fields. UPin search does
-not return private personalized delivery details. HTTP 429 and `Retry-After` report
-shared quotas; do not immediately retry quota denials. Built-in reverse geocoding
-uses the same authenticated client.
+and an optional `limit` (1–100); reverse accepts `lat`, `lon`.
+Search also accepts a full `polygon` (closed GeoJSON coordinate rings in longitude,
+latitude order) with either `q` or `categories`, plus `limit` (1–100). It preserves
+`intersects` matching and category OR semantics. Requests are limited to 1 MiB;
+polygons are limited to 20,000 vertices. Oversized routes are rejected, never truncated.
+The address-only search variant accepts `scope: "address"` and `q` and returns the
+existing App Search `results` shape with only ID, address and location fields.
+
+UPin accepts `mode` (`prefix`, `exact`, or `nearby`), with `q` for prefix/exact or
+`lat`/`lon` for nearby. Prefix can set `available_only: true`. Optional `auth_token`
+is a Firebase ID token, verified server-side against the existing owner record.
+An exact lookup can submit `address_no` and a four-digit `code`, or a `codes` object
+mapping address numbers to previously entered codes. Codes are checked on every
+request. Successful code checks do not consume the daily failed-attempt budget.
+Closed addresses appear only as numbers in `locked_addresses`; their private fields
+and coordinates are omitted from `personalized_data` until access is verified.
+Only the verified owner receives the stored code needed by the address editor.
+
+Responses otherwise use the existing `hits.hits` envelope. HTTP 429 and `Retry-After`
+report shared quotas; do not immediately retry quota denials. Built-in reverse
+geocoding uses the same authenticated client. The SDK signs the exact request body,
+including user credentials, with its installation key.
 
 Use `BharatMapsDataClient.request(Operation, JSONObject, Callback)`. Keep the returned
 `Cancellation` and cancel it when its screen or search becomes obsolete. Dispatch

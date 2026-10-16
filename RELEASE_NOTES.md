@@ -1,3 +1,11 @@
+# 1.0.72
+
+- Raise the signed data request limit to 1 MiB for complete route polygons. Method, URL and exact-body signature binding remain required.
+- Document route search and server-authorized private UPIN access. Production remains restricted to enabled first-party apps with Apple/Google verification; Web and third-party access are disabled.
+- Physical Pixel transport fixtures passed, including signed bodies larger than 16 KiB. These fixtures do not establish production Play Integrity acceptance.
+
+Source revision: 997f94394417499830d2966b1301c23f51cfacda.
+
 # 1.0.71
 
 - Add the public BharatMapsDataClient for signed search, housing, nearby, reverse and public UPin requests, with cancellation and server quota responses.
