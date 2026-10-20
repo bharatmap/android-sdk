@@ -1,3 +1,14 @@
+# 1.0.74
+
+- Load building footprints (`one_polygon_last`) from the authenticated Martin basemap in all four bundled themes.
+- Preserve building colors, layer order and existing visual settings. The server supplies z16 tiles with overzoom and a confidence threshold of 0.65.
+- Remove the airport runway layer and its now-unused legacy composite source from all four themes. Overview tiles and UPIN remain separate sources.
+- Credit Google Open Buildings in the basemap attribution. Legacy composite tiles remain compatible with older SDKs.
+- Rebuild the Android wrapper; native renderer libraries are byte-identical to 1.0.72.
+- Verify all four packaged themes on a physical Pixel with a real Martin building tile; AAR interface, version, resource and 16 KB alignment checks pass.
+
+Source revision: b1d82d74373f1d5f2afa8edf4df9290bd65d2463.
+
 # 1.0.72
 
 - Raise the signed data request limit to 1 MiB for complete route polygons. Method, URL and exact-body signature binding remain required.
