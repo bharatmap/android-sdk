@@ -1,3 +1,13 @@
+# 1.0.75
+
+- Apply immediate map viewport padding independently of center/zoom/bearing/pitch transitions. Keep the existing public setter and units, preserve follow and completion callbacks, and avoid additional smoothing.
+- New host-driven padding supersedes the padding captured by the current ease/fly/atomic transition, including no-op values; subsequent camera frames and completion cannot restore the old target. Later explicit camera transitions may own padding again.
+- Route location tracking padding through the same native viewport update, without cancelling camera transitions.
+- Native regression covers bounded ease, ease and fly with both changing and unchanged padding. Physical Pixel camera and locate/recenter fixtures passed against the candidate using local styles, including per-frame updates, final targets, callbacks, follow and lifecycle cancellation.
+- The existing navigation free-camera suite's exact zoom-15 assertion fails on both published 1.0.74 and this candidate. Both retain follow and the configured viewport; this suite is not reported as fully passing. Production tile authorization is outside these camera fixtures.
+
+Source revision: c0a7309a28b9bd2960a2c975fc4aff0f346b3304.
+
 # 1.0.74
 
 - Load building footprints (`one_polygon_last`) from the authenticated Martin basemap in all four bundled themes.

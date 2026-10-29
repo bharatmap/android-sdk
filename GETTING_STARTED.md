@@ -1,5 +1,12 @@
 # BharatMaps Android SDK: Quick Start
 
+## Immediate viewport updates (1.0.75)
+
+`setMapPadding(left, top, right, bottom)` uses pixels in left/top/right/bottom order. It applies immediately, without a second animation or smoothing step. It preserves follow/tracking and any running center/zoom/bearing/pitch transition and its completion callback. The update supersedes padding captured by that transition, including when setting the same current padding, so later transition frames and completion cannot restore an old target inset.
+
+Call the setter on the UI/main thread once per host layout/animation frame. Subsequent explicit camera transitions or navigation viewport changes can take ownership of padding again. The separate navigation viewport configuration remains unchanged. Use explicit animated-padding APIs only when the SDK should animate the viewport, rather than once per host animation frame. Explicit camera transitions still replace previous camera transitions.
+
+
 ## SDK naming and resources
 
 Use `BharatMapView` and `BharatMapsMap` from `com.bharatmaps.android.maps`.
@@ -28,7 +35,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.74"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.75"
 }
 ```
 
