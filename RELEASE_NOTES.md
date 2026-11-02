@@ -1,3 +1,14 @@
+# 1.0.78
+
+- Share the adaptive navigation framing policy with iOS: fit existing route geometry into the effective padded viewport, filter speed, frame important turns and nearby maneuver groups, and preserve the last trusted speed when it is unavailable.
+- Add immutable camera options and authoritative application-owned warning snapshots bound to the active session and route revision. Reject stale snapshots and reset warning state on route lifecycle changes.
+- Cache live congestion geometry between traffic updates. Animation updates only the clipped head segment and a segment filter, without rebuilding full traffic GeoJSON or repeatedly formatting segment colors through ICU. Reuse existing renderer route positions for camera/vanishing and cache route geometry between GPS updates.
+- Preserve traffic colors, route accent, updates, vanishing, style reload, reroute and stop/start. Preserve manual camera ownership, follow animations and host padding; explicit recenter restores the adaptive frame without an SDK auto-recenter timer.
+- All four release ABIs, public API/version/source metadata, branding, unchanged bundled styles and 16 KB ELF alignment checks passed. Shared camera/projection, route-position and bearing regressions passed.
+- Physical Pixel release fixtures passed: a 20,000-segment synthetic traffic route with vanishing enabled, static snapshot retention, clipped-head/puck alignment, updates, style reload, reroute, clear and stop/start; route animation retained zero vanishing/puck separation over 1,018 sampled frames. Physical fixtures use local styles and synthetic data. Vivo runtime remains unverified.
+
+Source revision: db1e541e3234a97a207c483abd837533ab14cf41.
+
 # 1.0.75
 
 - Apply immediate map viewport padding independently of center/zoom/bearing/pitch transitions. Keep the existing public setter and units, preserve follow and completion callbacks, and avoid additional smoothing.

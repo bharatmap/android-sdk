@@ -1,5 +1,75 @@
 # BharatMaps Android SDK: Quick Start
 
+## Adaptive navigation camera (1.0.78)
+
+The existing embedded navigation camera uses the shared geometry policy on Android
+and iOS. No additional controller or subscription is required.
+
+```java
+map.setNavigationCameraOptions(new BharatNavigationCameraOptions());
+// Optional tuning: seconds, minimum/maximum meters, minimum/maximum zoom.
+map.setNavigationCameraOptions(new BharatNavigationCameraOptions(20, 120, 1000, 12, 18));
+BharatNavigationProgress progress = map.getNavigationProgress();
+if (progress != null) {
+    BharatNavigationCameraEvent warning = new BharatNavigationCameraEvent(
+        "warning-42", latitude, longitude, BharatNavigationCameraEvent.Kind.CAMERA, 2, Double.NaN);
+    boolean accepted = map.updateNavigationCameraEvents(
+        progress.getSessionId(), progress.getRouteRevision(), java.util.Collections.singletonList(warning));
+    // An authoritative clear uses the same identity and an empty list.
+    map.updateNavigationCameraEvents(progress.getSessionId(), progress.getRouteRevision(),
+        java.util.Collections.emptyList());
+}
+map.recenterCamera();
+```
+
+Use `com.bharatmaps.android.maps.BharatNavigationCameraOptions` and
+`BharatNavigationCameraEvent`. Coordinates are latitude/longitude in degrees;
+heading is degrees clockwise from north or `Double.NaN` when unspecified. Event
+kinds are `CAMERA`, `ACCIDENT`, `CONSTRUCTION`, `FIRE`, and `WARNING` (including
+application-specific warnings such as tolls, gates, slopes and sharp turns).
+
+The default follow horizon is `clamp(filteredSpeed * 20 seconds, 120 m, 1000 m)`.
+Missing or inaccurate speed preserves the last trusted estimate; an unknown initial
+speed uses 10 m/s. A three-second time filter suppresses stop/start noise. Important
+turns and nearby maneuver groups shorten the horizon while retaining their approach,
+turn geometry and a 30–100 m tail. `continue`, `depart`, `arrive`, `notification` and
+`new name` steps do not independently request a close-up.
+
+Zoom comes from projecting that geometry at the existing user anchor, bearing and
+pitch into the effective padded viewport. Defaults allow zoom 12–18. Normal zoom-target
+changes use a 0.15 deadband, at most 0.5 zoom/s inward, and 0.35 zoom/s outward after
+a two-second delay. The geometric ceiling for a required maneuver/event overrides
+the delay/rate when retaining the old scale would hide it. A temporarily collapsed viewport, or geometry outside the configured zoom range,
+holds the displayed zoom until a usable frame is available. Existing platform camera
+animation still owns interpolation; padding does not start another camera controller.
+An explicit host padding update becomes the current navigation viewport, including
+subsequent GPS frames and recenter; it is not replaced by a previously saved viewport.
+
+Events are application data: the SDK does not scan rendered features or request a
+backend. Each authoritative snapshot is bound to the active `sessionId` and
+`routeRevision`; stale snapshots return false. Empty replaces the active list with
+no events. Temporary absence from a rendered query is **not** an authoritative clear:
+the application must retain its already discovered relevant events. IDs must be unique
+inside a snapshot. A new coordinate/heading for an unpassed ID updates its projection.
+
+Only upcoming events within 20 m of route geometry and the current lookahead are
+considered. Optional heading rejects the opposite route direction (75-degree
+threshold). Current along-route progress chooses the applicable occurrence on a loop;
+a passed ID cannot reappear during the same route revision, including after GPS rollback
+or an empty snapshot. New session, reroute, stop and arrival clear active event state;
+passed-ID history is reset with the route revision. Priority 0–3 resolves simultaneous
+warnings (higher values first), then the nearer event wins. A warning never removes a required maneuver.
+
+A coordinate alone cannot establish road identity between adjacent parallel roads;
+provide heading when the warning is directional and prefilter semantic applicability
+in the application. Unknown or unloaded offscreen warnings cannot influence the camera.
+No backend expansion is included. Pan, rotate, pinch, overview and manual camera APIs
+retain priority. There is no SDK auto-recenter timer. Call `recenterCamera()` to resume
+the current adaptive frame; an application-owned idle timer can use that same method.
+Settings and calls are main-thread only. Options persist across style changes; a newly
+created map uses defaults and requires the host to restore its configuration.
+
+
 ## Immediate viewport updates (1.0.75)
 
 `setMapPadding(left, top, right, bottom)` uses pixels in left/top/right/bottom order. It applies immediately, without a second animation or smoothing step. It preserves follow/tracking and any running center/zoom/bearing/pitch transition and its completion callback. The update supersedes padding captured by that transition, including when setting the same current padding, so later transition frames and completion cannot restore an old target inset.
@@ -35,7 +105,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.75"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.78"
 }
 ```
 
@@ -1549,6 +1619,10 @@ style reload and cleared on reroute/new Start/arrival/stop. Vanishing mode clips
 congestion to the same projected location as the remaining route. Revision identifies
 the route geometry, not the congestion poll; the application should discard older
 poll responses for the same route before calling this API.
+
+Since 1.0.78, traffic geometry is retained between snapshots. Puck animation updates
+only the current clipped segment; it does not rebuild or reformat every congestion
+segment. Submit snapshots when traffic data changes, not once per rendered frame.
 
 ## Native rendered-feature screen-shape queries (Android 1.0.36+)
 
