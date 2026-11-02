@@ -1,3 +1,14 @@
+# 1.0.81
+
+- Keep U-turn framing focused on the reversing arc and a short exit segment, instead of requiring a speed-dependent distant exit road behind the user anchor. Recognize both U-turn maneuver types and modifiers. Preserve required compound maneuvers and defer exit-road warning framing until the turn is complete.
+- Fit U-turn geometry through the displayed-to-target camera transition so early zoom-in does not clip the remaining arc while the camera is still rotating. Existing renderers retain movement, gesture ownership and zoom rate control; no global zoom floor is added.
+- Shared projection regressions cover both directions, three radii, constant and braking speed profiles, stops, compound turns, roundabout exits and portrait/landscape/compact viewports.
+- Physical Pixel fixtures reproduced the previous zoom drop to 15.28 at 25 m/s and to 15.35 with braking. The corrected transition fixtures measured minimum turn zoom 17.85 and 18.00 respectively, with no remaining arc outside the viewport. A 40 m radius turn retained its necessary wider framing (17.33), also without arc clipping. Maximum measured anchor error was about 1.2 physical pixels.
+- Independent framing, style reload, orientation changes, manual camera ownership, recenter, reroute, background/resume, stop/restart, and isolated straight-road warning zoom checks passed. The original user route was not available; these results are deterministic SDK fixtures, with application integration acceptance still separate.
+- All four Android ABIs are included; 64-bit ELF LOAD and RELRO segments pass 16 KB alignment checks. The release arm64 library is byte-identical to the physical-test candidate; Java differences contain only source-revision literals.
+
+Source revision: 5f9e2b4c5f0c754022814aed7b35223da56b5236.
+
 # 1.0.80
 
 - Fix distance expressions in source queries by supplying the canonical tile ID to vector, GeoJSON and custom geometry filter evaluation. Spatial filters can now evaluate feature coordinates instead of rejecting them for missing tile context.
