@@ -1,3 +1,13 @@
+# 1.0.83
+
+- Fix an UnsupportedOperationException when replay starts or reroutes to a route whose steps have zero length. The engine now owns a mutable copy of converter output, including the terminal singleton.
+- Stop delivering an old replay sample after a callback assigns a new route, stops replay, or holds the location. A superseded start cannot schedule more work after its synchronous callback returns.
+- Physical Pixel regressions reproduced the crash with public 1.0.82. A control build with only the mutable-copy fix still delivered a stale callback after reentrant assignment; the final fix passed both cases with constant and variable profiles, terminal reroute and stop/restart.
+- Constant-speed navigation with reroute reached the raw and rendered endpoint. The final all-ABI AAR passed queue regressions and variable-speed navigation with a synchronous restart inside ARRIVED; both runs reached the raw and rendered endpoint with zero measured error.
+- All four Android ABI libraries are byte-identical to 1.0.82; 64-bit LOAD and RELRO alignment checks passed for 16 KB pages. Version and source-revision metadata were verified. Full application/backend acceptance remains separate; no application source was changed.
+
+Source revision: a3106ed4599086ab80ecb7eb0350c4c923e7c8ed.
+
 # 1.0.82
 
 - Finish simulated navigation only after the replay engine emits the road-route endpoint and the existing puck renderer reaches it. Proximity thresholds and arrival milestones cannot terminate replay early; real-location arrival thresholds are unchanged.
