@@ -1,3 +1,13 @@
+# 1.0.80
+
+- Fix distance expressions in source queries by supplying the canonical tile ID to vector, GeoJSON and custom geometry filter evaluation. Spatial filters can now evaluate feature coordinates instead of rejecting them for missing tile context.
+- Preserve public APIs, source-query thread requirements and application-owned address selection.
+- Physical Pixel checks passed: native canonical/overscaled tile regressions, exact application address-result parity at 12 real-tile taps, and seven controlled geometry cases including distant building labels, facade gaps, neighboring buildings, polygon holes, MultiPolygon and hidden labels. Source data replacement, restoration, removal and style reload checks passed.
+- Real-tile queries returned 7–68 candidates instead of 10,768 features. Measured synchronous filtered query time was 45–278 ms; this release does not guarantee frame-budget latency. Runtime verification used the release native library in the existing application host; full published-AAR application acceptance follows publication.
+- Release AAR contains all four ABIs; 64-bit ELF LOAD and RELRO alignment checks passed for 16 KB pages.
+
+Source revision: 810a9ac0e41576ba4f3c2b0c16f29c2e6c6cb96d.
+
 # 1.0.79
 
 - Add `setNavigationCameraFramingViewport(left, top, right, bottom)` and `clearNavigationCameraFramingViewport()`. Insets use map-local physical pixels and define the real visible map rectangle independently of camera padding and its user anchor.
