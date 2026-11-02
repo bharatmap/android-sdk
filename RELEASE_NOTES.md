@@ -1,3 +1,15 @@
+# 1.0.84
+
+- Wait for the displayed puck to reach the emitted replay endpoint (within 5 cm) before publishing ARRIVED, including a reroute to zero-length geometry. Undefined or degenerate route-position indices no longer imply completion or prevent it indefinitely.
+- Do not use arrival-maneuver bearings to complete the final approach early. A zero remaining distance alone no longer means off-route; existing geometric, accuracy and movement checks still govern automatic rerouting. GPS arrival thresholds are unchanged.
+- Public 1.0.83 reproduced an early ARRIVED with the displayed puck 92.68 m from the new zero-length route endpoint. The corrected physical Pixel fixtures passed constant and variable zero-length reroutes. The final all-ABI AAR passed the same constant fixture with zero measured raw/rendered endpoint error.
+- Four unchanged application instrumentation tests passed with the candidate SDK and normal app listeners, traffic, header and backend provider: constant arrival, app variable simulation, held arrival/stop, and background/backend-reroute/stop. Variable first ARRIVED retained revision 1 with raw error 0 m and rendered error 0.048 m. Application source and assertions were not changed.
+- Final all-ABI AAR was also tested inside the real application: constant replay passed unchanged assertions on revision 1, with raw error 0 m and rendered error 0.025 m at first ARRIVED. Gradle resolved the exact prepared AAR SHA256.
+- A deliberate 100 m perpendicular replay deviation still triggered automatic reroute; the replacement route completed with raw/rendered endpoint error 0 m. All Java classes in the final artifact match the tested candidate except version/source literals.
+- All four native ABI libraries are unchanged from 1.0.83. 64-bit ELF LOAD and RELRO alignment passed for 16 KB pages. Published-artifact application acceptance remains separate.
+
+Source revision: c14ae7e349951995bec9ca7845ab9c8d37d2d3d6.
+
 # 1.0.83
 
 - Fix an UnsupportedOperationException when replay starts or reroutes to a route whose steps have zero length. The engine now owns a mutable copy of converter output, including the terminal singleton.
