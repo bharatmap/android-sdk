@@ -1,5 +1,31 @@
 # BharatMaps Android SDK: Quick Start
 
+## Independent navigation framing (1.0.79)
+
+Camera padding determines the user anchor. When padding represents a narrow anchor
+band, pass the **real visible map rectangle** separately for adaptive route fitting:
+
+```java
+// All measurements are map-local physical pixels.
+map.setMapPadding(0, anchorY - halfBandHeight, 0, mapHeight - anchorY - halfBandHeight);
+map.setNavigationCameraFramingViewport(0, visibleTop, 0, mapHeight - visibleBottom);
+```
+
+`visibleTop` is the bottom of the header; `visibleBottom` is the top of the controls
+that cover the map. A 60 dp anchor band uses a 30 dp half-height converted to physical
+pixels. The framing rectangle must include the user anchor. Existing
+`setNavigationCameraViewport(...)` can continue to set navigation anchor padding.
+Call the framing setter after the existing padding update in the host layout callback.
+It never changes camera padding, center, bearing or pitch. While following, it retargets
+the SDK's existing zoom animation using the current sample and normal policy smoothing;
+in free-camera/overview mode it only stores the bounds. Call `recenterCamera()` when
+explicitly resuming follow to fit the fresh frame.
+
+`clearNavigationCameraFramingViewport()` restores fitting against camera padding.
+Without an explicit framing viewport, behavior is unchanged. Collapsed bounds or geometry outside the configured zoom range hold the current zoom. Insets must be nonnegative; calls are main-thread only.
+Framing persists across route sessions and style changes, independently of traffic
+or warning snapshots. A recreated map requires the host to restore its layout.
+
 ## Adaptive navigation camera (1.0.78)
 
 The existing embedded navigation camera uses the shared geometry policy on Android
@@ -105,7 +131,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.78"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.79"
 }
 ```
 

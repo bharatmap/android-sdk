@@ -1,3 +1,12 @@
+# 1.0.79
+
+- Add `setNavigationCameraFramingViewport(left, top, right, bottom)` and `clearNavigationCameraFramingViewport()`. Insets use map-local physical pixels and define the real visible map rectangle independently of camera padding and its user anchor.
+- Keep existing follow/zoom animation ownership, user gestures and manual transitions. Clear restores the previous camera-padding fit; layout, style and route sessions preserve explicit framing until the host changes it.
+- Shared core projection regressions cover a 60-point anchor band, independent visible bounds, portrait/landscape, three bearings, fixed anchors, clear and unusable bounds. The existing C++ fitting entry point remains available.
+- Physical Pixel public-API acceptance passed: 250 m lookahead uses approximately 1,145 px instead of 48 px at the same anchor, with portrait/landscape, style reload, clear and manual-transition callbacks retained. Release AAR contains all four ABIs and passes public API, branding and 16 KB alignment checks.
+
+Source revision: 2b97bf035b2a7963aa1a70e97422db2f1f9b7c5b.
+
 # 1.0.78
 
 - Share the adaptive navigation framing policy with iOS: fit existing route geometry into the effective padded viewport, filter speed, frame important turns and nearby maneuver groups, and preserve the last trusted speed when it is unavailable.
