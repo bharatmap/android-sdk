@@ -1,3 +1,14 @@
+# 1.0.82
+
+- Finish simulated navigation only after the replay engine emits the road-route endpoint and the existing puck renderer reaches it. Proximity thresholds and arrival milestones cannot terminate replay early; real-location arrival thresholds are unchanged.
+- Include segment endpoints for constant-speed replay, advance through zero-length arrival steps and via legs, and emit a single terminal sample with zero speed and the final route bearing. Holding retains that emitted location instead of jumping to an unvisited destination.
+- Preserve hold/auto-stop options and the original off-road calibration target. An explicit engine stop before the endpoint stops navigation without publishing ARRIVED. A new session started inside an ARRIVED callback is not cleared by the old session.
+- Physical Pixel fixtures record raw replay coordinates, last ACTIVE progress, first ARRIVED and rendered position. Constant/braking profiles, 35–1000 m routes, final turns, via legs, 0.5x–8x multipliers, hold/auto-stop combinations, same-engine restart, callback restart and reroute passed. Source and rendered endpoint errors at first ARRIVED were zero in the measured fixtures. An 80 m off-road calibration target remained separate from the road endpoint.
+- Manual camera ownership, viewport changes, recenter, route/session revision handling and activity recreation passed. App acceptance of the newly published AAR remains separate. No application source was changed.
+- All four Android ABIs are packaged; 64-bit ELF LOAD and RELRO alignment is checked for 16 KB pages.
+
+Source revision: 305c63ac963c630d640b29a507f0dd84b5c17a78.
+
 # 1.0.81
 
 - Keep U-turn framing focused on the reversing arc and a short exit segment, instead of requiring a speed-dependent distant exit road behind the user anchor. Recognize both U-turn maneuver types and modifiers. Preserve required compound maneuvers and defer exit-road warning framing until the turn is complete.
