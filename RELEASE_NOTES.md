@@ -1,3 +1,10 @@
+# 1.0.86
+
+- Align the Android package version with iOS 1.0.86, which adds the iOS route line width multiplier. Android runtime source is unchanged; version/source metadata is updated.
+- All-ABI release assembly completed. Tests and device/simulator runs were intentionally skipped at the owner's request for this release.
+
+Source revision: 35381e258de74ca39ce84f9a2b25c97f476b6e46.
+
 # 1.0.85
 
 - Align the Android package version with iOS 1.0.85, which adds explicit camera release and fixes iOS arrival anchors and left-turn framing.
