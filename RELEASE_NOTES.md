@@ -1,3 +1,10 @@
+# 1.0.87
+
+- Align the Android package version with iOS 1.0.87, which adds preview route selection by map point. Android runtime source is unchanged; version/source metadata is updated.
+- All-ABI release assembly completed. No tests were added or run, and no device/simulator was launched, at the owner's request.
+
+Source revision: 2de20afc227eae6da71bf3766628efdc8f994008.
+
 # 1.0.86
 
 - Align the Android package version with iOS 1.0.86, which adds the iOS route line width multiplier. Android runtime source is unchanged; version/source metadata is updated.
