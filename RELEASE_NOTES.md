@@ -1,3 +1,11 @@
+# 1.0.85
+
+- Align the Android package version with iOS 1.0.85, which adds explicit camera release and fixes iOS arrival anchors and left-turn framing.
+- Android runtime code is unchanged. All four native ABI libraries are byte-identical to published 1.0.84. Java entries differ only in version/source-revision literals; dependencies are unchanged.
+- All-ABI release assembly and 64-bit ELF LOAD/RELRO alignment checks passed for 16 KB pages. No new physical Android runtime test was performed for this metadata-only update; 1.0.84 acceptance remains the runtime baseline.
+
+Source revision: c5ed525f80e1bc68c1ad6d7bf1e30b6ba8416abf.
+
 # 1.0.84
 
 - Wait for the displayed puck to reach the emitted replay endpoint (within 5 cm) before publishing ARRIVED, including a reroute to zero-length geometry. Undefined or degenerate route-position indices no longer imply completion or prevent it indefinitely.
