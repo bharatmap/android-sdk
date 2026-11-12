@@ -1,3 +1,9 @@
+# 1.0.89
+
+- Align the Android version with iOS SDK 1.0.89. Android runtime changes are limited to version and source revision metadata.
+
+Source revision: dd5492405c7afef697653f9be4db35b227cc1204.
+
 # 1.0.88
 
 - Reduce live navigation puck lag and keep significant maneuvers visible on approach.
