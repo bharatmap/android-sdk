@@ -1,3 +1,11 @@
+# 1.0.88
+
+- Reduce live navigation puck lag and keep significant maneuvers visible on approach.
+- Distinguish confirmed wrong-way reroutes, vehicle stop and walking away on a mapped pedestrian way.
+- Refresh spoken maneuver guidance by route and step, announce roundabout entry and exit, and distinguish flyovers from service-road exits.
+
+Source revision: d8ce121eaf9e3ef2a492d9530f2fe480b4dfe2b0.
+
 # 1.0.87
 
 - Align the Android package version with iOS 1.0.87, which adds preview route selection by map point. Android runtime source is unchanged; version/source metadata is updated.
