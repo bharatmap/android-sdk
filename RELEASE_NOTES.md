@@ -1,3 +1,10 @@
+# 1.0.90
+
+- Align the Android version with iOS SDK 1.0.90 and update source revision metadata.
+- Rebuild the Java package and reuse the verified, byte-identical native libraries for all four ABIs from published 1.0.89. The source changes in this release add the iOS custom marker pitch API.
+
+Source revision: fe53b106b4901f16855be74e0d30f29c83775129.
+
 # 1.0.89
 
 - Align the Android version with iOS SDK 1.0.89. Android runtime changes are limited to version and source revision metadata.
