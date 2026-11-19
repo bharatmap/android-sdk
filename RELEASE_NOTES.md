@@ -1,3 +1,14 @@
+# 1.0.92
+
+- Render cached SDK-owned Martin tiles during Android cold offline startup when the existing signed license gate permits access. Signature, application binding, expiry and the maximum 24-hour offline window remain enforced. Cached tiles do not authorize network access.
+- Reuse cached ETags across bm_revision changes and retain tile bodies after a 304 response, avoiding downloads of unchanged tiles. HTTP freshness metadata and DPoP protection remain intact.
+- Revoke in-process map grants and delete the stored offline permit on a current Martin issuer/resource denial. Handle denial even when the authorization queue is saturated; ignore stale-token denials.
+- Physical Pixel checks passed for signed-license failure/recovery cases, denial, queue saturation and cold cached-map startup in a candidate app. Host native revision-cache tests passed.
+- Applications must recognize successful signed offline availability separately from network READY; this release preserves the existing meaning of READY. Offline revocation is learned on reconnection and remains bounded by the signed permit expiry.
+- Align the version with iOS 1.0.92.
+
+Source revision: f57eb937b235179dbf319ffdb4a49c6a93fa4d54.
+
 # 1.0.91
 
 - Rebuild navigation notification RemoteViews for each update to prevent unbounded Binder parcels and TransactionTooLargeException during long navigation sessions.
