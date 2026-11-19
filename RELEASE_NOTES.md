@@ -1,3 +1,13 @@
+# 1.0.91
+
+- Rebuild navigation notification RemoteViews for each update to prevent unbounded Binder parcels and TransactionTooLargeException during long navigation sessions.
+- Persist building-name revision snapshots off the UI thread, preserving atomic snapshots, coalescing pending changes and retrying failed writes through the existing poll cycle.
+- Physical Pixel regression passed: 15,000 notification updates remain bounded; delayed writes, superseded snapshots and retry after a failed commit passed.
+- Align the version with iOS 1.0.91. Native libraries for all four ABIs are byte-identical to published 1.0.90.
+- The Android vitals GPU sample originates in system HWUI/Skia and the Mali driver; this release does not claim a GPU-driver fix.
+
+Source revision: d55bae96d9b4e35c714b9279a66cac28cf70c2bf.
+
 # 1.0.90
 
 - Align the Android version with iOS SDK 1.0.90 and update source revision metadata.
