@@ -1,3 +1,15 @@
+# 1.0.97
+
+- Add route-bound progressive roundabout guidance shared by UI snapshots and SDK speech: approach, arc distance rounded to 5 m, pre-exit and exit. Arcs shorter than 25 m use one cue.
+- Publish phase, text, destination-relative direction, exit road, marker/exit locations and remaining arc distance. Do not ask drivers to count exits or interpret a destination-right cue as a physical right turn off the circle.
+- Handle split circle steps, unnamed exits and routes beginning inside a circle. If a combined step omits the exit boundary, use one cue with an unknown exit location/arc length instead of inventing geometry.
+- Support English, Hindi and Hinglish. Skip phrases that cannot finish before their phase expires; cancel stale phase speech, preserve mute and cancel old guidance on reroute/stop.
+- Physical device checks passed for phase/voice consistency, continuous exit traversal, speed-dependent speech, mute, stop/restart, reroute and injected GPS processing. These are controlled fixture checks with system speech callbacks, not outdoor or acoustic recordings.
+- Android bridge/flyover regression passed for flyover, service road and a decision inside a long step.
+- Android and iOS use the same version, 1.0.97.
+
+Source revision: 4aa2bc14dcd91afaefb41bcb09e5e47085492bfe.
+
 # 1.0.96
 
 - Resolve explicit bridge/flyover instructions from licensed road tiles along the selected route, independently of the rendered viewport, zoom, style, and OSRM step boundaries.

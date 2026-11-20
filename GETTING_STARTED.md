@@ -131,7 +131,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.96"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.97"
 }
 ```
 
@@ -2164,3 +2164,41 @@ road data before the SDK can safely issue a command.
 Decision speech is marked complete only after the system TTS completion callback.
 Ordinary step changes do not interrupt an active decision sentence. Route replacement,
 stop, and mute cancel obsolete speech; the saved mute preference is preserved.
+
+## Progressive roundabout guidance
+
+Use `BharatNavigationProgress.getRoundaboutGuidance()` for a route-bound
+`BharatRoundaboutGuidance`, or null outside the active circle. Use its `text` for
+cards and Android Auto, its `location` for the current marker, and key state by
+`progress.routeId` plus `guidance.id`. The SDK owns speech; applications must not
+speak the same OSRM circle instruction again.
+
+The snapshot exposes `phase` (`approach`, `inside`, `pre_exit`, `exit`, `single`),
+`destinationDirection` (`left`, `right`, `straight`, `uturn`, or `unknown`),
+`exitRoad`, `exitLocation`, `arcLengthMeters`, and signed
+`distanceRemainingMeters`. Direction describes the destination relative to the
+entry heading; it is not a physical instruction to turn right off the circle.
+During approach, remaining distance and marker location refer to entry; afterward
+they refer to the actual exit. The ordinary progress instruction text agrees with
+this snapshot. Clear circle UI when it becomes null, navigation stops/arrives, or
+the route ID changes. Detailed OSRM step distances retain their existing meaning.
+
+Explicit exit steps define the arc boundary, including circles split over several
+steps. Arcs shorter than 25 m use one entry command; longer arcs use approach
+(within 100 m), inside (distance rounded to 5 m), pre-exit (15 m), and exit (1 m)
+phases. Speech whose estimated duration exceeds the remaining phase time is
+skipped; newer phases cancel obsolete circle speech. A short exit sentence may
+finish just after the exit. No exit number is spoken.
+
+OSRM can collapse `roundabout turn` with its outbound road. Without a separate
+exit boundary the SDK uses a single entry command, returns null `exitLocation`
+and NaN `arcLengthMeters`, and never treats the outbound road length as the arc.
+Other incomplete circle steps use a generic entry cue with direction `unknown`.
+Routes beginning on a circle can use their explicit exit step without inventing
+an entry-relative direction. Slip lanes remain ordinary maneuvers. Road labels
+come only from the exit or an explicitly straight continuation before another turn.
+
+`map.setRoundaboutGuidanceLanguage("en")` selects the language of this feature;
+accepted values are `en` (default), `hi`, and `hi-Latn`. This does not change the
+language contract of other maneuvers. Mute, route replacement and stop use the
+existing navigation speech controls. Bridge guidance retains priority.
