@@ -1,3 +1,12 @@
+# 1.0.94
+
+- Frame ordinary navigation turns using the puck and the active maneuver point. Exit-road geometry and later turns no longer reduce the approach zoom; the complete route remains rendered.
+- Select the Android camera maneuver from the same matched RouteProgress step as the instruction engine. Preserve camera smoothing, the puck anchor, manual control, U-turn arcs and roundabout framing.
+- Physical Pixel 8a checks passed at 12 km/h with a bottom panel: four controlled routes retain zoom 18 before the right turn, versus 16.736 in the 1.0.93 close-left case. Instruction transitions, manual zoom, recenter, U-turn and roundabout checks passed. These fixtures do not reproduce the exact reported street.
+- Build all four Android ABIs and align the version with iOS 1.0.94.
+
+Source revision: 7db904ba2f36d45de932263ba2f51640f4868f50.
+
 # 1.0.93
 
 - Select U-turn resources from the maneuver step's driving_side in the shared ManeuverUtils resolver used by instruction cards and system notifications: left-hand traffic renders a right U-turn; right-hand traffic renders a left U-turn.
