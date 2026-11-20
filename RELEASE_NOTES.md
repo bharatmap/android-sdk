@@ -1,3 +1,13 @@
+# 1.0.98
+
+- Advance the roundabout pre-exit phase using current speed and the short warning duration, with a minimum of 15 m and allowance for one normal 1 Hz update plus TTS startup. Card and speech use the same phase.
+- Fix the missing pre-exit warning reproduced on public 1.0.97 with normal variable-speed Jawahar Circle replay: the fixed 15 m trigger was first observed at 10.238 m, too late for speech.
+- Physical normal-replay checks, without manually injected progress: Android warned at 32.05 m and completed at 20.04 m; iOS warned at 29.21 m and completed at 18.89 m. All four circle phrases completed without repetition or cancellation, retaining the final exit command.
+- Android bridge/flyover checks passed for both branches and an instruction inside a long step. Host checks cover 1 Hz input at approximately 35, 45 and 60 km/h. Extended GPS outages are not covered by this timing allowance.
+- No public API changes. Android and iOS share version 1.0.98.
+
+Source revision: 6d5292989c7f85e1933c14767d9d0082bf6774ec.
+
 # 1.0.97
 
 - Add route-bound progressive roundabout guidance shared by UI snapshots and SDK speech: approach, arc distance rounded to 5 m, pre-exit and exit. Arcs shorter than 25 m use one cue.

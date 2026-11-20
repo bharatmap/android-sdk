@@ -131,7 +131,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.97"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.98"
 }
 ```
 
@@ -2185,8 +2185,9 @@ the route ID changes. Detailed OSRM step distances retain their existing meaning
 
 Explicit exit steps define the arc boundary, including circles split over several
 steps. Arcs shorter than 25 m use one entry command; longer arcs use approach
-(within 100 m), inside (distance rounded to 5 m), pre-exit (15 m), and exit (1 m)
-phases. Speech whose estimated duration exceeds the remaining phase time is
+(within 100 m), inside (distance rounded to 5 m), pre-exit, and exit (1 m) phases.
+Pre-exit starts at least 15 m ahead, advanced by speed to allow the short phrase
+plus one normal 1 Hz update and 0.5 s TTS startup. Speech whose estimated duration exceeds the remaining phase time is
 skipped; newer phases cancel obsolete circle speech. A short exit sentence may
 finish just after the exit. No exit number is spoken.
 
