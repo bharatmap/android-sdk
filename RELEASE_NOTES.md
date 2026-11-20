@@ -1,3 +1,12 @@
+# 1.0.93
+
+- Select U-turn resources from the maneuver step's driving_side in the shared ManeuverUtils resolver used by instruction cards and system notifications: left-hand traffic renders a right U-turn; right-hand traffic renders a left U-turn.
+- Preserve the standard arrow geometry, other maneuver selection and the legacy unspecified-side fallback. No country-specific logic or app-wide mirroring is used.
+- Physical Pixel 8a verification passed for two routes with identical turn/uturn maneuvers and opposite driving sides. Instruction-engine cards and expanded system notification icons match pixel-for-pixel; changing sides updates the same notification session.
+- Reuse byte-identical native libraries for all four ABIs from published 1.0.92 and align the version with iOS 1.0.93.
+
+Source revision: 5f6ed07624924006784ab2f39d55c6c4033bd5ce.
+
 # 1.0.92
 
 - Render cached SDK-owned Martin tiles during Android cold offline startup when the existing signed license gate permits access. Signature, application binding, expiry and the maximum 24-hour offline window remain enforced. Cached tiles do not authorize network access.
