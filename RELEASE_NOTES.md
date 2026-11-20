@@ -1,3 +1,14 @@
+# 1.0.96
+
+- Resolve explicit bridge/flyover instructions from licensed road tiles along the selected route, independently of the rendered viewport, zoom, style, and OSRM step boundaries.
+- Publish a route-bound roadDecision with full text, matching icon, actual decision coordinate, code and signed remaining distance for application panels and markers.
+- Mark decision speech complete only after Android TTS onDone; preserve active decision speech across ordinary step changes and cancel it on reroute, stop or mute.
+- Physical Pixel checks passed for both real Bhaskar Flyover branches, cold/warm cache, offscreen recognition, style/zoom changes, an instruction inside one long step, speech completion/cancellation and saved mute state. Host regressions cover sub-meter coded links and ambiguous overlap suppression. No acoustic recording or host-app marker integration acceptance is claimed.
+- Require explicit direction and unambiguous connected geometry; unsupported or ambiguous branches produce no special command. Additional authoritative road metadata is needed for those cases.
+- Build all four Android ABIs. Align the version with iOS 1.0.96.
+
+Source revision: 1224bf6ee3e4ff6489d70ab1f9fe3e928eb45cab.
+
 # 1.0.95
 
 - Frame U-turns progressively: approach the entry, follow the nearest unpassed quarter of the reversing arc, then return to the next maneuver or driving horizon. Preserve route geometry, puck anchoring and existing camera smoothing; no global zoom floor is added.

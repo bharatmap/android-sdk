@@ -131,7 +131,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.95"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.96"
 }
 ```
 
@@ -2129,3 +2129,38 @@ Examples: `Gopalpura Flyover` becomes `Keep right to take Gopalpura Flyover`;
 `Gopalpura` becomes `Keep right to take Gopalpura flyover`. Empty names retain the
 generic instruction. Avoid-flyover/underpass, waterstream and lane instructions
 are unchanged. No application-side text cleanup is necessary.
+
+
+## Route-bound bridge decisions
+
+For bridge/flyover decisions, use `details.roadDecision` as the single source for
+the panel and map marker. This nullable `BharatNavigationDecision` contains:
+
+- `id`: stable within `details.routeId`; key UI state by both values.
+- `text`: complete instruction, including the authored bridge name when applicable.
+- `maneuverIconResId`: the SDK drawable for that same instruction.
+- `location`: the actual road decision point, not the next OSRM step coordinate.
+- `distanceRemainingMeters`: signed distance along the selected route.
+- `code`: the explicit road `bridge_instructions` value.
+
+The decision can occur inside a long OSRM step. Do not derive its coordinate from
+`upcomingStep` or run a second app-side bridge matcher. Clear the marker when the
+decision is null, the route ID changes, navigation arrives, or progress is cleared
+on stop. `instructionText`, `bridgeInstructionText`, and `maneuverIconResId` agree
+with the active decision. The legacy trip maneuver distance also refers to that
+decision, while detailed step distances continue to describe the OSRM step.
+The progress callback publishes the complete snapshot before the separate sign
+callback; speech is submitted afterward with the same route revision.
+
+Road metadata comes through the SDK's licensed tile loader and cache, independently
+of the rendered viewport, zoom, and style. Missing metadata and geometrically
+ambiguous branches produce no special command. Recognition requires an explicit
+code and a directed, connected road branch; names and `bridge=yes` are not evidence.
+The current Martin roads contract supplies `gid`, `table_no`, `oneway`, geometry,
+and `bridge_instructions`. Bidirectional or overlapping branches without an
+unambiguous authored decision point/direction require additional authoritative
+road data before the SDK can safely issue a command.
+
+Decision speech is marked complete only after the system TTS completion callback.
+Ordinary step changes do not interrupt an active decision sentence. Route replacement,
+stop, and mute cancel obsolete speech; the saved mute preference is preserved.
