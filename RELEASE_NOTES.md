@@ -1,3 +1,13 @@
+# 1.0.95
+
+- Frame U-turns progressively: approach the entry, follow the nearest unpassed quarter of the reversing arc, then return to the next maneuver or driving horizon. Preserve route geometry, puck anchoring and existing camera smoothing; no global zoom floor is added.
+- Avoid an immediate zoom-out when the active instruction switches before the camera has turned onto the U-turn approach. The entry can temporarily remain outside the viewport during that rotation.
+- Physical Pixel 8a comparison against 1.0.94 passed for the supplied Gopalpura geometry, its mirrored direction, a controlled warning and 40 m radius turns in both directions. Minimum zoom changed from 17.28 to 19.78 at the instruction switch, 16.88 to 19.89 on the tight turn, and 15.10 to 18.81 on wide turns. Maximum anchor deviation stayed 1.2 px.
+- Tests used fixed speeds and a controlled warning, not the exact original warning event. Road basemap readability remains unverified: the isolated fixture license received HTTP 401 for tiles. Host camera regressions passed.
+- Align the version with iOS 1.0.95.
+
+Source revision: 72cd799becfc24e860c0fee886ac80d6022dfa00.
+
 # 1.0.94
 
 - Frame ordinary navigation turns using the puck and the active maneuver point. Exit-road geometry and later turns no longer reduce the approach zoom; the complete route remains rendered.
