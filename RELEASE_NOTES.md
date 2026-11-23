@@ -1,3 +1,13 @@
+# 1.0.100
+
+- Restore OSRM exit numbers in English roundabout guidance, including Jawahar Circle exits 5 and 7.
+- Announce a following left/right turn or merge in advance when its exit road is at most 30 m long. Preserve the maneuver type supplied by OSRM and size the warning lead time for the complete phrase.
+- Verified native variable-speed replay on physical Pixel 8a and iPhone 18 Pro iOS 27.0 simulator: all four circle speech phases completed without cancellation. On exit 5, the linked warning finished 18.7 m before the exit on Android and 22.5 m on iOS.
+- Verified right U-turn text, panel and marker rendering for the corrected Bosch median-return route. Recognition of that maneuver is fixed separately in the routing service, not inferred by the SDK from road names.
+- No public API changes. Android and iOS share version 1.0.100. Speech checks use system completion callbacks, not acoustic recordings.
+
+Source revision: 8cc4deaa3dc0337c9266bdde383df50653b70345.
+
 # 1.0.99
 
 - Add shared phased navigation camera: time-based overview with exit geometry, close decision framing, traffic hold and confirmed-exit progression.
