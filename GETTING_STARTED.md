@@ -56,15 +56,29 @@ application-specific warnings such as tolls, gates, slopes and sharp turns).
 
 The default follow horizon is `clamp(filteredSpeed * 20 seconds, 120 m, 1000 m)`.
 Missing or inaccurate speed preserves the last trusted estimate; an unknown initial
-speed uses 10 m/s. A three-second time filter suppresses stop/start noise. Important
-turns and nearby maneuver groups shorten the horizon while retaining their approach,
-turn geometry and a 30–100 m tail. `continue`, `depart`, `arrive`, `notification` and
-`new name` steps do not independently request a close-up.
+speed uses 10 m/s. A three-second time filter suppresses stop/start noise.
+At about 20 seconds (or within 60 m), an ordinary turn opens an overview of the
+approach, turn and 30–60 m of exit road. Two turns separated by at most eight seconds
+are shown together. At seven seconds or within 30 m, the camera prioritizes the
+first decision and the first 10 m of its exit. Time-based close entry requires a
+trusted speed estimate; the unknown-speed fallback cannot latch it. This close phase persists while
+stopped and cannot return to overview after GPS/speed jitter. Passing the decision
+by 10 m (less for tightly spaced turns) advances focus to the next maneuver.
+U-turns retain progressive framing of the unpassed arc; roundabouts retain their
+entry and chosen exit, including separate entry/exit steps. `continue`, `depart`,
+`arrive` and `notification` do not independently request a close-up. A `new name`
+step only qualifies when route geometry turns by at least 25 degrees there.
 
-Zoom comes from projecting that geometry at the existing user anchor, bearing and
-pitch into the effective padded viewport. Defaults allow zoom 12–18. Normal zoom-target
+Pitch targets are 55 degrees on the horizon, 30 in overview and 45 in close view,
+with target changes limited to eight degrees/second. Movement still owns bearing;
+the camera never rotates toward the next road in advance. The existing viewport
+owns the puck anchor throughout pitch/zoom changes.
+
+Zoom comes from projecting that geometry at the existing user anchor, movement bearing and
+phase pitch into the effective padded viewport. Defaults allow zoom 12–18. Normal zoom-target
 changes use a 0.15 deadband, at most 0.5 zoom/s inward, and 0.35 zoom/s outward after
-a two-second delay. The geometric ceiling for a required maneuver/event overrides
+a two-second delay. Overview zoom-out starts immediately at the same limited rate
+and bypasses the outward deadband so exit context is not clipped. The geometric ceiling for a required maneuver/event overrides
 the delay/rate when retaining the old scale would hide it. A temporarily collapsed viewport, or geometry outside the configured zoom range,
 holds the displayed zoom until a usable frame is available. Existing platform camera
 animation still owns interpolation; padding does not start another camera controller.
@@ -131,7 +145,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.bharatmaps:bharatmaps-android:1.0.98"
+    implementation "com.bharatmaps:bharatmaps-android:1.0.79"
 }
 ```
 
@@ -1583,8 +1597,39 @@ Totals/remaining/traveled distances are meters, durations seconds. Remaining
 waypoints are remaining leg endpoints in order, including the final destination.
 `INITIAL` precedes live `ACTIVE` updates; `ARRIVED` has zero remaining distance and
 is emitted before legacy progress is cleared. The latest detailed ARRIVED snapshot
-remains readable until stop/new start. Bridge text is nullable when no bridge data
-is available from the loaded map; the SDK does not invent missing instructions.
+remains readable until stop/new start.
+
+For bridge/flyover decisions, use `details.roadDecision` as the single source for
+the panel and map marker. This nullable `BharatNavigationDecision` contains:
+
+- `id`: stable within `details.routeId`; key UI state by both values.
+- `text`: complete instruction, including the authored bridge name when applicable.
+- `maneuverIconResId`: the SDK drawable for that same instruction.
+- `location`: the actual road decision point, not the next OSRM step coordinate.
+- `distanceRemainingMeters`: signed distance along the selected route.
+- `code`: the explicit road `bridge_instructions` value.
+
+The decision can occur inside a long OSRM step. Do not derive its coordinate from
+`upcomingStep` or run a second app-side bridge matcher. Clear the marker when the
+decision is null, the route ID changes, navigation arrives, or progress is cleared
+on stop. `instructionText`, `bridgeInstructionText`, and `maneuverIconResId` agree
+with the active decision. The legacy trip maneuver distance also refers to that
+decision, while detailed step distances continue to describe the OSRM step.
+The progress callback publishes the complete snapshot before the separate sign
+callback; speech is submitted afterward with the same route revision.
+
+Road metadata comes through the SDK's licensed tile loader and cache, independently
+of the rendered viewport, zoom, and style. Missing metadata and geometrically
+ambiguous branches produce no special command. Recognition requires an explicit
+code and a directed, connected road branch; names and `bridge=yes` are not evidence.
+The current Martin roads contract supplies `gid`, `table_no`, `oneway`, geometry,
+and `bridge_instructions`. Bidirectional or overlapping branches without an
+unambiguous authored decision point/direction require additional authoritative
+road data before the SDK can safely issue a command.
+
+Decision speech is marked complete only after the system TTS completion callback.
+Ordinary step changes do not interrupt an active decision sentence. Route replacement,
+stop, and mute cancel obsolete speech; the saved mute preference is preserved.
 
 ## Application reroute provider
 
@@ -2129,41 +2174,6 @@ Examples: `Gopalpura Flyover` becomes `Keep right to take Gopalpura Flyover`;
 `Gopalpura` becomes `Keep right to take Gopalpura flyover`. Empty names retain the
 generic instruction. Avoid-flyover/underpass, waterstream and lane instructions
 are unchanged. No application-side text cleanup is necessary.
-
-
-## Route-bound bridge decisions
-
-For bridge/flyover decisions, use `details.roadDecision` as the single source for
-the panel and map marker. This nullable `BharatNavigationDecision` contains:
-
-- `id`: stable within `details.routeId`; key UI state by both values.
-- `text`: complete instruction, including the authored bridge name when applicable.
-- `maneuverIconResId`: the SDK drawable for that same instruction.
-- `location`: the actual road decision point, not the next OSRM step coordinate.
-- `distanceRemainingMeters`: signed distance along the selected route.
-- `code`: the explicit road `bridge_instructions` value.
-
-The decision can occur inside a long OSRM step. Do not derive its coordinate from
-`upcomingStep` or run a second app-side bridge matcher. Clear the marker when the
-decision is null, the route ID changes, navigation arrives, or progress is cleared
-on stop. `instructionText`, `bridgeInstructionText`, and `maneuverIconResId` agree
-with the active decision. The legacy trip maneuver distance also refers to that
-decision, while detailed step distances continue to describe the OSRM step.
-The progress callback publishes the complete snapshot before the separate sign
-callback; speech is submitted afterward with the same route revision.
-
-Road metadata comes through the SDK's licensed tile loader and cache, independently
-of the rendered viewport, zoom, and style. Missing metadata and geometrically
-ambiguous branches produce no special command. Recognition requires an explicit
-code and a directed, connected road branch; names and `bridge=yes` are not evidence.
-The current Martin roads contract supplies `gid`, `table_no`, `oneway`, geometry,
-and `bridge_instructions`. Bidirectional or overlapping branches without an
-unambiguous authored decision point/direction require additional authoritative
-road data before the SDK can safely issue a command.
-
-Decision speech is marked complete only after the system TTS completion callback.
-Ordinary step changes do not interrupt an active decision sentence. Route replacement,
-stop, and mute cancel obsolete speech; the saved mute preference is preserved.
 
 ## Progressive roundabout guidance
 

@@ -1,3 +1,13 @@
+# 1.0.99
+
+- Add shared phased navigation camera: time-based overview with exit geometry, close decision framing, traffic hold and confirmed-exit progression.
+- Frame nearby turns together, preserve progressive U-turn arcs and include the chosen roundabout exit. Keep the puck anchor and movement bearing while smoothly adapting pitch and zoom.
+- Fix premature close framing with unknown initial speed, overview clipping and iOS scale jumps between nearby turns.
+- Verified five matched-progress replay scenarios on physical Pixel 8a and iPhone 18 Pro iOS 27.0 simulator. Background-only fixtures validate geometry and anchor; road labels and host application panels were not tested.
+- No public API changes. Android and iOS share version 1.0.99.
+
+Source revision: cdc1d78b6cc4ac1414da76d339dc72f2d5b57270.
+
 # 1.0.98
 
 - Advance the roundabout pre-exit phase using current speed and the short warning duration, with a minimum of 15 m and allowance for one normal 1 Hz update plus TTS startup. Card and speech use the same phase.
